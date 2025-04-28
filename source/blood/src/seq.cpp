@@ -39,7 +39,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "view.h"
 
 #define kMaxClients 256
-#define kMaxSequences 1024
+//#define kMaxSequences 1024
+#define kMaxSequences 4096 // marius: allow more sequences to support more fx
 
 static ACTIVE activeList[kMaxSequences];
 static int activeCount = 0;

@@ -70,7 +70,7 @@ FXDATA gFXData[] = {
     { kCallbackNone, 2, 43, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 48, 3, -256, 8192, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 60, 3, -256, 8192, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackFXBloodBits, 2, 0, 1, 46603, 2048, 480, 2154, 40, 40, 0, -12, 0 },
+    { kCallbackFXBloodBits, 2, 0, 1, 46603, 2048, 480, 2154, 40, 40, 0, -12, 0 }, // blood chunk
     { kCallbackNone, 2, 0, 3, 46603, 5120, 480, 2269, 24, 24, 0, -128, 0 },
     { kCallbackNone, 2, 0, 3, 46603, 5120, 480, 1720, 24, 24, 0, -128, 0 },
     { kCallbackNone, 1, 0, 1, 58254, 3072, 480, 2280, 48, 48, 0, -128, 0 },
@@ -84,7 +84,8 @@ FXDATA gFXData[] = {
     { kCallbackNone, 2, 0, 1, -18641, 8192, 600, 1128, 12, 12, 514, -16, 0 }, // bubble 2
     { kCallbackNone, 2, 0, 1, -9320, 8192, 600, 1128, 8, 8, 514, -16, 0 }, // bubble 3
     { kCallbackNone, 2, 0, 1, -18641, 8192, 600, 1131, 32, 32, 514, -16, 0 },
-    { kCallbackFXBloodBits, 2, 0, 3, 27962, 4096, 480, 733, 32, 32, 0, -16, 0 },
+    //{ kCallbackFXBloodBits, 2, 0, 3, 27962, 4096, 480, 733, 32, 32, 0, -16, 0 },
+    { kCallbackFXBloodBits, 2, 0, 3, 80000, 4096, 480, 733, 32, 32, 0, -16, 0 }, // marius: make blood heavier
     { kCallbackNone, 1, 0, 3, 18641, 4096, 120, 2261, 12, 12, 0, -128, 0 },
     { kCallbackNone, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 0, 3, 58254, 3328, 480, 2185, 48, 48, 0, 0, 0 },
@@ -93,14 +94,14 @@ FXDATA gFXData[] = {
     { kCallbackNone, 1, 56, 1, -13981, 5120, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 57, 1, 0, 2048, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 58, 1, 0, 2048, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 },
+    { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // blood splat
     { kCallbackFXBouncingSleeve, 2, 62, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 63, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 64, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 65, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 66, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 67, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 },
+    { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // bullet decal
     { kCallbackNone, 0, 0, 3, 34952, 8192, 0, 2078, 64, 64, 0, -8, 0 },
     { kCallbackNone, 0, 0, 3, 34952, 8192, 0, 1106, 64, 64, 0, -8, 0 },
     { kCallbackNone, 0, 0, 3, 58254, 3328, 480, 2406, 48, 48, 0, 0, 0 },
@@ -164,7 +165,42 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
     if (nFx < 0 || nFx >= kFXMax)
         return NULL;
     FXDATA *pFX = &gFXData[nFx];
-    if (gStatCount[kStatFX] == 512) // hit upper limit of available sprites, don't spawn any more
+    // marius: longer duration of fx
+    switch (nFx)
+    {
+    case FX_0:
+    case FX_1:
+    case FX_2:
+    case FX_3:
+    case FX_13:
+    case FX_34:
+        if (!duration) // no override duration given, load from global fx data struct
+            duration = pFX->duration;
+        duration *= 20;
+        break;
+    case FX_35:
+        if (!duration) // no override duration given, load from global fx data struct
+            duration = pFX->duration;
+        duration *= 10;
+        break;
+    case FX_36: // blood splat
+        if (!duration) // no override duration given, load from global fx data struct
+            duration = pFX->duration;
+        duration *= 200;
+        break;   
+    case FX_39: // bullet casing
+    case FX_40: // shell casing
+        if (!duration) // no override duration given, load from global fx data struct
+            duration = pFX->duration;
+        duration *= 5;
+        break;
+    default:
+        break;
+    }
+    // end marius
+
+  //if (gStatCount[kStatFX] == 512)
+    if (gStatCount[kStatFX] >= 2048) // marius: allow more fx before starting to remove them
     {
         int nSprite = headspritestat[kStatFX];
         while ((sprite[nSprite].flags & 32) && nSprite != -1) // scan through sprites for free slot

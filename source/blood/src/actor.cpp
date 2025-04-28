@@ -6566,7 +6566,8 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                                 FX_ID t2 = pVectorData->surfHit[nSurf].fx2;
                                 FX_ID t3 = pVectorData->surfHit[nSurf].fx3;
                                 spritetype *pFX = NULL;
-                                if (t2 > FX_NONE && (t3 == FX_NONE || Chance(0x4000)))
+                                //if (t2 > FX_NONE && (t3 == FX_NONE || Chance(0x4000)))
+                                if (t2 > FX_NONE) // marius: allways spawn blood on wall
                                     pFX = gFX.fxSpawn(t2, nSector, x, y, z);
                                 else if(t3 > FX_NONE)
                                     pFX = gFX.fxSpawn(t3, nSector, x, y, z);
@@ -6580,9 +6581,19 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                         }
                     }
                 }
-                for (int i = 0; i < pVectorData->bloodSplats; i++)
+              /*for (int i = 0; i < pVectorData->bloodSplats; i++)
                     if (Chance(pVectorData->splatChance))
-                        fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                        fxSpawnBlood(pSprite, pVectorData->dmg<<4);*/
+              //for (int i = 0; i < pVectorData->bloodSplats; i++)
+              //{
+              // marius: splatIncrement
+              int splatIncrement = pVectorData->bloodSplats + (rand() % (5 - gGameOptions.nDifficulty));
+              for (int j = 0; j < splatIncrement; j++) 
+              {
+                  fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+              }
+              //}
+              // end marius
             }
             #ifdef NOONE_EXTENSIONS
             // add impulse for sprites from physics list
