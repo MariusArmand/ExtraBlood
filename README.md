@@ -1,5 +1,5 @@
 # ExtraBlood
-Fork of the Reverse-engineered port of the Build game Blood [NBlood] using EDuke32 engine technology and development principles.
+Fork of the Reverse-engineered port of the Build game Blood [NBlood](https://github.com/NBlood/NBlood) using EDuke32 engine technology and development principles.
 Goal is to add more and longer lasting gore.
 
 ### Installing
@@ -38,3 +38,6 @@ See: https://wiki.eduke32.com/wiki/Main_Page
 
 ## Acknowledgments
   See AUTHORS.md
+
+## License
+ExtraBlood is licensed under the GNU General Public License version 2 (GPLv2), as inherited from NBlood.
