@@ -3,69 +3,13 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Build Rednukem Debug",
-            "linux": {
-                "command": "make rr RELEASE=0",
-                "details": "GNU Make for Linux"
-            },
-            "windows": {
-                "command": "mingw32-make.exe rr RELEASE=0",
-                "detail": "GNU Make with mingw32 for Windows"
-            },
-            "group": "build",
-            "problemMatcher": [],
-        },
-        {
-            "type": "shell",
-            "label": "Build NBlood Debug",
+            "label": "Build ExtraBlood Debug",
             "linux": {
                 "command": "make blood RELEASE=0",
                 "details": "GNU Make for Linux"
             },
             "windows": {
                 "command": "mingw32-make.exe blood RELEASE=0",
-                "detail": "GNU Make with mingw32 for Windows"
-            },
-            "group": "build",
-            "problemMatcher": [],
-        },
-        {
-            "type": "shell",
-            "label": "Build PCExhumed Debug",
-            "linux": {
-                "command": "make exhumed RELEASE=0",
-                "details": "GNU Make for Linux"
-            },
-            "windows": {
-                "command": "mingw32-make.exe exhumed RELEASE=0",
-                "detail": "GNU Make with mingw32 for Windows"
-            },
-            "group": "build",
-            "problemMatcher": [],
-        },
-        {
-            "type": "shell",
-            "label": "Build ETekwar Debug",
-            "linux": {
-                "command": "make tekwar RELEASE=0",
-                "details": "GNU Make for Linux"
-            },
-            "windows": {
-                "command": "mingw32-make.exe tekwar RELEASE=0",
-                "detail": "GNU Make with mingw32 for Windows"
-            },
-            "group": "build",
-            "problemMatcher": [],
-        },
-        {
-            "type": "shell",
-            "label": "Build EWitchaven Debug",
-            "linux": {
-                "command": "make witchaven RELEASE=0",
-                "details": "GNU Make for Linux"
-            },
-            "windows": {
-                "command": "mingw32-make.exe witchaven RELEASE=0",
                 "detail": "GNU Make with mingw32 for Windows"
             },
             "group": "build",

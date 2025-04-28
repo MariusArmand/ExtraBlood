@@ -2,62 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Rednukem",
+            "name": "Debug ExtraBlood",
             "type": "cppdbg",
             "request": "launch",
             "linux": {
-                "program": "${workspaceRoot}/rednukem",
+                "program": "${workspaceRoot}/extrablood",
             },
             "windows": {
-                "program": "${workspaceRoot}/rednukem.exe",
-            },
-            "cwd": "${workspaceRoot}",
-        },
-        {
-            "name": "Debug NBlood",
-            "type": "cppdbg",
-            "request": "launch",
-            "linux": {
-                "program": "${workspaceRoot}/nblood",
-            },
-            "windows": {
-                "program": "${workspaceRoot}/nblood.exe",
-            },
-            "cwd": "${workspaceRoot}",
-        },
-        {
-            "name": "Debug PCExhumed",
-            "type": "cppdbg",
-            "request": "launch",
-            "linux": {
-                "program": "${workspaceRoot}/pcexhumed",
-            },
-            "windows": {
-                "program": "${workspaceRoot}/pcexhumed.exe",
-            },
-            "cwd": "${workspaceRoot}",
-        }
-        {
-            "name": "Debug ETekwar",
-            "type": "cppdbg",
-            "request": "launch",
-            "linux": {
-                "program": "${workspaceRoot}/etekwar",
-            },
-            "windows": {
-                "program": "${workspaceRoot}/etekwar.exe",
-            },
-            "cwd": "${workspaceRoot}",
-        },
-        {
-            "name": "Debug EWitchaven",
-            "type": "cppdbg",
-            "request": "launch",
-            "linux": {
-                "program": "${workspaceRoot}/ewitchaven",
-            },
-            "windows": {
-                "program": "${workspaceRoot}/ewitchaven.exe",
+                "program": "${workspaceRoot}/extrablood.exe",
             },
             "cwd": "${workspaceRoot}",
         }

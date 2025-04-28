@@ -1,11 +1,9 @@
-# NBlood / Rednukem / PCExhumed
-Reverse-engineered ports of Build games using EDuke32 engine technology and development principles
-
-## NBlood
-Blood port based on EDuke32
+# ExtraBlood
+Fork of the Reverse-engineered port of the Build game Blood [NBlood] using EDuke32 engine technology and development principles.
+Goal is to add more and longer lasting gore.
 
 ### Installing
-1. Extract NBlood to a new directory
+1. Extract ExtraBlood to a new directory
 2. Copy the following files from Blood 1.21 to NBlood folder:
    * BLOOD.INI
    * BLOOD.RFF
@@ -34,54 +32,6 @@ If you have the GOG version of the game, do the following:
 
 ### Notes
 NBlood now uses nblood_cvars.cfg instead of settings.cfg. Please rename your settings.cfg if you need to retain settings from a previous version.
-
-## PCExhumed
-A port of the PC version of Exhumed based on EDuke32
-
-### Installing
-1. Extract PCExhumed to a new directory.
-2. Copy the following files from the PC retail version of Exhumed or Powerslave (Exhumed preferred), or the Powerslave demo available at http://www.jonof.id.au/build.games/ps. Beta, pre-release or other demo versions not supported.
-
-   STUFF.DAT
-   DEMO.VCR
-   BOOK.MOV
-
-3. Recommended (but optional) - Add the games CD audio tracks as OGG files in the format exhumedXX.ogg or trackXX.ogg (where XX is the track number) to the same folder as
-   pcexhumed.exe. The game includes tracks 02 to 19.
-   These will provide the game with its music soundtrack and add storyline narration by the King Ramses NPC.
-
-4. Launch PCExhumed.
-
-### Notes
-Demo playback is not yet working.
-
-### Adjusting settings
-We are currently working on fancy new menus for the game. In the meantime, you can edit the settings.cfg file in the game directory that's created on first run.
-
-To invert the mouse, add the line 'in_mouseflip 0' to settings.cfg.
-To change the FOV, add a new line to settings.cfg, e.g. 'fov "120"' where 120 is the desired FOV value between 60 and 140.
-
-## Rednukem
-A port of BUILD engine games based on Duke Nukem 3D codebase using EDuke32 engine
-
-### Supported games
-
-* Duke Nukem 3D: Atomic Edition
-* Redneck Rampage
-* Redneck Rampage: Rides Again
-* Duke Nukem 64
-* NAM/NAPALM
-* World War II GI
-
-### Installing
-1. Extract Rednukem to a new directory.
-2. Copy game data files:
-    * Duke Nukem 3D: DUKE3D.GRP, DUKE.RTS
-    * Redneck Rampage: REDNECK.GRP, REDNECK.RTS, optionally CD audio tracks as OGG file in the format trackXX.ogg (where XX is the track number)
-    * Duke Nukem 64: Duke 64 cartridge ROM dump, optionally MIDI tracks extracted from DUKE3D.GRP
-    * NAM: NAM.GRP, NAM.RTS, CON files
-    * World War II GI: WW2GI.GRP, WW2GI.RTS, CON files
-3. Launch Rednukem
 
 ## Building from source
 See: https://wiki.eduke32.com/wiki/Main_Page

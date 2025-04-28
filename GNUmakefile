@@ -2,18 +2,6 @@
 # EDuke32 Makefile for GNU Make
 #
 
-### Global Profiles
-ifeq ($(FURY),1)
-    APPBASENAME := fury
-    APPNAME := Ion Fury
-    NETCODE := 0
-    POLYMER := 0
-    RETAIL_MENU := 1
-    STANDALONE := 1
-    USE_LIBVPX := 0
-    SDL_STATIC := 1
-endif
-
 ### Platform and Toolchain Configuration
 include Common.mak
 
@@ -470,200 +458,7 @@ ifeq ($(RENDERTYPE),SDL)
 endif
 
 
-#### KenBuild (Test Game)
-
-kenbuild := kenbuild
-
-kenbuild_root := $(source)/$(kenbuild)
-kenbuild_src := $(kenbuild_root)/src
-kenbuild_rsrc := $(kenbuild_root)/rsrc
-kenbuild_obj := $(obj)/$(kenbuild)
-
-kenbuild_cflags := -I$(kenbuild_src)
-
-kenbuild_game := ekenbuild
-kenbuild_editor := ekenbuild-editor
-
-kenbuild_game_deps := audiolib
-
-kenbuild_game_proper := EKenBuild
-kenbuild_editor_proper := EKenBuild-Editor
-
-kenbuild_game_objs := \
-    common.cpp \
-    config.cpp \
-    kdmeng.cpp \
-    game.cpp \
-
-kenbuild_editor_objs := \
-    bstub.cpp \
-    common.cpp \
-
-kenbuild_game_rsrc_objs :=
-kenbuild_editor_rsrc_objs :=
-kenbuild_game_gen_objs :=
-kenbuild_editor_rsrc_objs :=
-
-ifeq (11,$(HAVE_GTK2)$(STARTUP_WINDOW))
-    kenbuild_game_objs += startgtk.game.cpp
-    kenbuild_game_gen_objs += game_banner.c
-    kenbuild_editor_gen_objs += build_banner.c
-endif
-ifeq ($(RENDERTYPE),SDL)
-    kenbuild_game_rsrc_objs += game_icon.c
-    kenbuild_editor_rsrc_objs += build_icon.c
-endif
-ifeq ($(PLATFORM),WINDOWS)
-    kenbuild_game_objs += startwin.game.cpp
-    kenbuild_game_rsrc_objs += gameres.rc
-    kenbuild_editor_rsrc_objs += buildres.rc
-endif
-
-ifeq ($(PLATFORM),DARWIN)
-    ifeq ($(STARTUP_WINDOW),1)
-        kenbuild_game_objs += StartupWinController.game.mm
-    endif
-endif
-
-
-#### TekWar
-
-tekwar := tekwar
-
-tekwar_root := $(source)/$(tekwar)
-tekwar_src := $(tekwar_root)/src
-tekwar_rsrc := $(tekwar_root)/rsrc
-tekwar_obj := $(obj)/$(tekwar)
-
-tekwar_cflags := -I$(tekwar_src)
-
-tekwar_game := etekwar
-tekwar_editor := etekwar-editor
-
-tekwar_game_proper := ETekWar
-tekwar_editor_proper := ETekWar Editor
-
-tekwar_game_deps := audiolib mact libsmackerdec hmpplay
-
-tekwar_game_objs := \
-    b5compat.cpp \
-    common.cpp \
-    config.cpp \
-    grpscan.cpp \
-    osdcmds.cpp \
-    tekcdr.cpp \
-    tekchng.cpp \
-    tekgame.cpp \
-    tekgun.cpp \
-    tekldsv.cpp \
-    tekmap.cpp \
-    tekmsc.cpp \
-    tekprep.cpp \
-    teksmk.cpp \
-    teksnd.cpp \
-    tekspr.cpp \
-    tekstat.cpp \
-    tektag.cpp \
-    tektxt.cpp \
-    tekver.cpp \
-
-tekwar_editor_objs := \
-    bstub.cpp \
-
-tekwar_game_rsrc_objs :=
-tekwar_editor_rsrc_objs :=
-tekwar_game_gen_objs :=
-tekwar_editor_rsrc_objs :=
-
-ifeq (11,$(HAVE_GTK2)$(STARTUP_WINDOW))
-    tekwar_game_objs += startgtk.game.cpp
-    tekwar_game_gen_objs += game_banner.c
-    tekwar_editor_gen_objs += build_banner.c
-endif
-ifeq ($(RENDERTYPE),SDL)
-    tekwar_game_rsrc_objs += game_icon.c
-    tekwar_editor_rsrc_objs += game_icon.c
-endif
-ifeq ($(PLATFORM),WINDOWS)
-    tekwar_game_objs += startwin.game.cpp
-    tekwar_game_rsrc_objs += gameres.rc
-    tekwar_editor_rsrc_objs += buildres.rc
-endif
-
-
-#### Duke Nukem 3D
-
-duke3d := duke3d
-
-duke3d_game_ldflags :=
-duke3d_editor_ldflags :=
-
-duke3d_game_stripflags :=
-duke3d_editor_stripflags :=
-
-duke3d_root := $(source)/$(duke3d)
-duke3d_src := $(duke3d_root)/src
-duke3d_rsrc := $(duke3d_root)/rsrc
-duke3d_obj := $(obj)/$(duke3d)
-
-ifneq (,$(APPBASENAME))
-    ifeq ($(PLATFORM),WINDOWS)
-        duke3d_rsrc := $(duke3d_root)/rsrc/$(APPBASENAME)
-    endif
-    duke3d_obj := $(obj)/$(APPBASENAME)
-endif
-
-duke3d_cflags :=
-
-common_editor_deps := duke3d_common_editor engine_editor
-
-duke3d_game_deps := audiolib mact
-duke3d_editor_deps := audiolib
-
-duke3d_game := eduke32
-duke3d_editor := mapster32
-
-ifneq (,$(APPBASENAME))
-    duke3d_game := $(APPBASENAME)
-endif
-
-duke3d_game_proper := EDuke32
-duke3d_editor_proper := Mapster32
-
-duke3d_common_editor_objs := \
-    m32common.cpp \
-    m32def.cpp \
-    m32exec.cpp \
-    m32vars.cpp \
-
-duke3d_editor_objs := \
-    astub.cpp \
-    common.cpp \
-    grpscan.cpp \
-    sounds_mapster32.cpp \
-
-duke3d_excl := \
-    in_android.cpp \
-    m32structures.cpp \
-    mdump.cpp \
-    startgtk.game.cpp \
-    startwin.game.cpp \
-    $(duke3d_common_editor_objs) \
-    $(duke3d_editor_objs) \
-
-duke3d_game_objs := $(call getfiltered,duke3d,*.cpp) \
-    common.cpp \
-    grpscan.cpp \
-
-duke3d_game_rsrc_objs :=
-duke3d_editor_rsrc_objs :=
-duke3d_game_gen_objs :=
-duke3d_editor_gen_objs :=
-
-duke3d_game_miscdeps :=
-duke3d_editor_miscdeps :=
-duke3d_game_orderonlydeps :=
-duke3d_editor_orderonlydeps :=
+#### Depends
 
 ifeq ($(SUBPLATFORM),LINUX)
     LIBS += -lFLAC -lasound
@@ -681,30 +476,10 @@ ifeq ($(PLATFORM),DARWIN)
     ifneq (00,$(DARWIN9)$(DARWIN10))
         LIBS += -Wl,-framework,QuickTime
     endif
-
-    ifeq ($(STARTUP_WINDOW),1)
-        duke3d_game_objs += GrpFile.game.mm GameListSource.game.mm startosx.game.mm
-    endif
 endif
 
 ifeq ($(PLATFORM),WINDOWS)
     LIBS += -lFLAC -ldsound
-    duke3d_game_objs += winbits.cpp
-    duke3d_game_rsrc_objs += gameres.rc
-    duke3d_editor_rsrc_objs += buildres.rc
-    ifeq ($(STARTUP_WINDOW),1)
-        duke3d_game_objs += startwin.game.cpp
-    endif
-endif
-
-ifeq (11,$(HAVE_GTK2)$(STARTUP_WINDOW))
-    duke3d_game_objs += startgtk.game.cpp
-    duke3d_game_gen_objs += game_banner.c
-    duke3d_editor_gen_objs += build_banner.c
-endif
-ifeq ($(RENDERTYPE),SDL)
-    duke3d_game_rsrc_objs += game_icon.c
-    duke3d_editor_rsrc_objs += build_icon.c
 endif
 
 
@@ -729,13 +504,13 @@ ifneq (0,$(NETCODE))
     blood_game_deps += enet
 endif
 
-blood_game := nblood
+blood_game := extrablood
 
 ifneq (,$(APPBASENAME))
     blood_game := $(APPBASENAME)
 endif
 
-blood_game_proper := NBlood
+blood_game_proper := ExtraBlood
 
 blood_game_objs := \
 	blood.cpp \
@@ -848,376 +623,6 @@ ifeq ($(RENDERTYPE),SDL)
 endif
 
 
-#### Redneck Rampage
-
-rr := rr
-
-rr_game_ldflags :=
-rr_editor_ldflags :=
-
-rr_game_stripflags :=
-rr_editor_stripflags :=
-
-rr_root := $(source)/$(rr)
-rr_src := $(rr_root)/src
-rr_rsrc := $(rr_root)/rsrc
-rr_obj := $(obj)/$(rr)
-
-rr_cflags := -I$(rr_src)
-
-common_editor_deps := rr_common_editor engine_editor
-
-rr_game_deps := audiolib mact
-rr_editor_deps := audiolib
-
-ifneq (0,$(NETCODE))
-    rr_game_deps += enet
-endif
-
-rr_game := rednukem
-rr_editor := rrmapster32
-
-ifneq (,$(APPBASENAME))
-    rr_game := $(APPBASENAME)
-endif
-
-rr_game_proper := Rednukem
-rr_editor_proper := RRMapster32
-
-rr_common_editor_objs := \
-    m32common.cpp \
-    m32def.cpp \
-    m32exec.cpp \
-    m32vars.cpp \
-
-rr_game_objs := \
-    game.cpp \
-    global.cpp \
-    actors.cpp \
-    gamedef.cpp \
-    gameexec.cpp \
-    gamevars.cpp \
-    player.cpp \
-    premap.cpp \
-    sector.cpp \
-    anim.cpp \
-    common.cpp \
-    config.cpp \
-    demo.cpp \
-    input.cpp \
-    menus.cpp \
-    namesdyn.cpp \
-    net.cpp \
-    savegame.cpp \
-    rts.cpp \
-    osdfuncs.cpp \
-    osdcmds.cpp \
-    grpscan.cpp \
-    sounds.cpp \
-    soundsdyn.cpp \
-    cheats.cpp \
-    sbar.cpp \
-    screentext.cpp \
-    screens.cpp \
-    cmdline.cpp \
-    rrdh.cpp \
-    filestream.cpp \
-    playmve.cpp \
-
-rr_editor_objs := \
-    astub.cpp \
-    common.cpp \
-    grpscan.cpp \
-    sounds_mapster32.cpp \
-
-rr_game_rsrc_objs :=
-rr_editor_rsrc_objs :=
-rr_game_gen_objs :=
-rr_editor_gen_objs :=
-
-rr_game_miscdeps :=
-rr_editor_miscdeps :=
-rr_game_orderonlydeps :=
-rr_editor_orderonlydeps :=
-
-ifeq ($(PLATFORM),DARWIN)
-    ifeq ($(STARTUP_WINDOW),1)
-        rr_game_objs += GrpFile.game.mm GameListSource.game.mm startosx.game.mm
-    endif
-endif
-
-ifeq ($(PLATFORM),WINDOWS)
-    rr_game_objs += winbits.cpp
-    rr_game_rsrc_objs += gameres.rc
-    rr_editor_rsrc_objs += buildres.rc
-    ifeq ($(STARTUP_WINDOW),1)
-        rr_game_objs += startwin.game.cpp
-    endif
-endif
-
-ifeq (11,$(HAVE_GTK2)$(STARTUP_WINDOW))
-    rr_game_objs += startgtk.game.cpp
-    rr_game_gen_objs += game_banner.c
-    rr_editor_gen_objs += build_banner.c
-endif
-ifeq ($(RENDERTYPE),SDL)
-    rr_game_rsrc_objs += game_icon.c
-    rr_editor_rsrc_objs += build_icon.c
-endif
-
-n64 := n64
-n64_src := $(rr_src)/$(n64)
-n64_obj := $(rr_obj)/$(n64)
-n64_objs := \
-    reality.cpp \
-    reality_music.cpp \
-    reality_player.cpp \
-    reality_render.cpp \
-    reality_sbar.cpp \
-    reality_screens.cpp \
-    reality_sound.cpp \
-    reality_util.cpp \
-
-n64_cflags :=
-
-rr_game_deps += n64
-
-
-#### Shadow Warrior
-
-sw := sw
-
-sw_root := $(source)/$(sw)
-sw_src := $(sw_root)/src
-sw_rsrc := $(sw_root)/rsrc
-sw_obj := $(obj)/$(sw)
-
-sw_cflags :=
-
-sw_game_deps := audiolib mact
-sw_editor_deps := audiolib
-
-sw_game := voidsw
-sw_editor := wangulator
-
-sw_game_proper := VoidSW
-sw_editor_proper := Wangulator
-
-sw_editor_objs := \
-    bldscript.cpp \
-    brooms.cpp \
-    colormap.cpp \
-    common.cpp \
-    grpscan.cpp \
-    jbhlp.cpp \
-    jnstub.cpp \
-
-sw_excl := \
-    startgtk.game.cpp \
-    startwin.game.cpp \
-    $(sw_editor_objs) \
-
-sw_game_objs := $(call getfiltered,sw,*.cpp) \
-    colormap.cpp \
-    common.cpp \
-    grpscan.cpp \
-
-sw_game_rsrc_objs :=
-sw_editor_rsrc_objs :=
-sw_game_gen_objs :=
-sw_editor_gen_objs :=
-
-ifeq (11,$(HAVE_GTK2)$(STARTUP_WINDOW))
-    sw_game_objs += startgtk.game.cpp
-    sw_game_gen_objs += game_banner.c
-    sw_editor_gen_objs += build_banner.c
-endif
-ifeq ($(RENDERTYPE),SDL)
-    sw_game_rsrc_objs += game_icon.c
-    sw_editor_rsrc_objs += game_icon.c
-endif
-ifeq ($(PLATFORM),WINDOWS)
-    sw_game_objs += startwin.game.cpp
-    sw_game_rsrc_objs += gameres.rc
-    sw_editor_rsrc_objs += buildres.rc
-endif
-ifeq ($(PLATFORM),DARWIN)
-    ifeq ($(STARTUP_WINDOW),1)
-        sw_game_objs += GrpFile.game.mm GameListSource.game.mm StartupWinController.game.mm
-    endif
-endif
-
-
-#### Exhumed
-
-exhumed := exhumed
-
-exhumed_root := $(source)/$(exhumed)
-exhumed_src := $(exhumed_root)/src
-exhumed_rsrc := $(exhumed_root)/rsrc
-exhumed_obj := $(obj)/$(exhumed)
-
-exhumed_cflags := -I$(exhumed_src)
-
-exhumed_game_deps := duke3d_common_midi audiolib mact
-exhumed_editor_deps := audiolib
-
-exhumed_game := pcexhumed
-exhumed_editor := pcexhumed_editor
-
-exhumed_game_proper := PCExhumed
-exhumed_editor_proper := PCExhumed Editor
-
-exhumed_game_objs := \
-    aistuff.cpp \
-    anims.cpp \
-    anubis.cpp \
-    bubbles.cpp \
-    bullet.cpp \
-    cd.cpp \
-    common.cpp \
-    config.cpp \
-    enginesubs.cpp \
-    exhumed.cpp \
-    exscript.cpp \
-    fish.cpp \
-    grenade.cpp \
-    grpscan.cpp \
-    gun.cpp \
-    init.cpp \
-    input.cpp \
-    items.cpp \
-    lavadude.cpp \
-    light.cpp \
-    lighting.cpp \
-    lion.cpp \
-    map.cpp \
-    memorystream.cpp \
-    menu.cpp \
-    mono.cpp \
-    move.cpp \
-    movie.cpp \
-    mummy.cpp \
-    network.cpp \
-    object.cpp \
-    osdcmds.cpp \
-    player.cpp \
-    queen.cpp \
-    ra.cpp \
-    ramses.cpp \
-    random.cpp \
-    rat.cpp \
-    record.cpp \
-    rex.cpp \
-    roach.cpp \
-    runlist.cpp \
-    save.cpp \
-    scorp.cpp \
-    sequence.cpp \
-    serial.cpp \
-    set.cpp \
-    snake.cpp \
-    sound.cpp \
-    spider.cpp \
-    status.cpp \
-    stream.cpp \
-    switch.cpp \
-    text2.cpp \
-    timer.cpp \
-    trigdat.cpp \
-    version.cpp \
-    view.cpp \
-    wasp.cpp \
-
-exhumed_editor_objs :=
-
-exhumed_game_rsrc_objs :=
-exhumed_editor_rsrc_objs :=
-exhumed_game_gen_objs :=
-exhumed_editor_gen_objs :=
-
-ifeq (11,$(HAVE_GTK2)$(STARTUP_WINDOW))
-    exhumed_game_objs += startgtk.game.cpp
-    exhumed_game_gen_objs += game_banner.c
-    exhumed_editor_gen_objs += build_banner.c
-endif
-ifeq ($(RENDERTYPE),SDL)
-    exhumed_game_rsrc_objs += game_icon.c
-    exhumed_editor_rsrc_objs += game_icon.c
-endif
-ifeq ($(PLATFORM),WINDOWS)
-    exhumed_game_objs += startwin.game.cpp
-    exhumed_game_rsrc_objs += gameres.rc
-    exhumed_editor_rsrc_objs += buildres.rc
-endif
-ifeq ($(PLATFORM),DARWIN)
-    ifeq ($(STARTUP_WINDOW),1)
-        exhumed_game_objs += GrpFile.game.mm GameListSource.game.mm startosx.game.mm
-    endif
-endif
-
-
-#### Witchaven
-
-witchaven := witchaven
-
-witchaven_root := $(source)/$(witchaven)
-witchaven_src := $(witchaven_root)/src
-witchaven_rsrc := $(witchaven_root)/rsrc
-witchaven_obj := $(obj)/$(witchaven)
-
-witchaven_cflags := -I$(witchaven_src)
-
-witchaven_game_deps := duke3d_common_midi audiolib mact hmpplay
-witchaven_editor_deps := audiolib
-
-witchaven_game := ewitchaven
-witchaven_editor := ewitchaven_editor
-
-witchaven_game_proper := EWitchaven
-witchaven_editor_proper := EWitchaven Editor
-
-witchaven_game_objs := \
-    animation.cpp \
-    common.cpp \
-    config.cpp \
-    effects.cpp \
-    enginesubs.cpp \
-    grpscan.cpp \
-    input.cpp \
-    menu.cpp \
-    network.cpp \
-    objects.cpp \
-    osdcmds.cpp \
-    player.cpp \
-    sound.cpp \
-    tags.cpp \
-    view.cpp \
-    witchaven.cpp \
-
-witchaven_editor_objs :=
-
-witchaven_game_rsrc_objs :=
-witchaven_editor_rsrc_objs :=
-witchaven_game_gen_objs :=
-witchaven_editor_gen_objs :=
-
-ifeq (11,$(HAVE_GTK2)$(STARTUP_WINDOW))
-    witchaven_game_objs += startgtk.game.cpp
-    witchaven_game_gen_objs += game_banner.c
-    witchaven_editor_gen_objs += build_banner.c
-endif
-ifeq ($(RENDERTYPE),SDL)
-    witchaven_game_rsrc_objs += game_icon.c
-    witchaven_editor_rsrc_objs += game_icon.c
-endif
-ifeq ($(PLATFORM),WINDOWS)
-    witchaven_game_objs += startwin.game.cpp
-    witchaven_game_rsrc_objs += gameres.rc
-    witchaven_editor_rsrc_objs += buildres.rc
-endif
-
-
 #### Includes
 
 COMPILERFLAGS += \
@@ -1246,14 +651,7 @@ endif
 ##### Recipes
 
 games := \
-    duke3d \
-    kenbuild \
     blood \
-    rr \
-    sw \
-    exhumed \
-    witchaven \
-	tekwar \
 
 libraries := \
     audiolib \
@@ -1308,8 +706,6 @@ endif
 
 all: \
     blood \
-    rr \
-    exhumed \
 
 start:
 	$(BUILD_STARTED)
@@ -1493,7 +889,7 @@ cleantools:
 	-$(call RM,$(addsuffix $(EXESUFFIX),$($(subst clean,,$@)_targets)))
 	-$(call RMDIR,$($(subst clean,,$@)_obj))
 
-clean: cleanduke3d cleansw cleanblood cleanrr cleanexhumed cleanwitchaven cleantekwar cleantools
+clean: cleanblood cleantools
 	-$(call RMDIR,$(obj))
 	-$(call RM,$(ebacktrace_dll))
 	-$(call RM,$(voidwrap_lib))
@@ -1506,9 +902,7 @@ rev: $(engine_obj)/rev.$o
 
 ### Compatibility
 
-cleantest: cleankenbuild
 cleanutils: cleantools
 printutils: printtools
-test: kenbuild
 utils: tools
 veryclean: clean

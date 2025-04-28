@@ -15,6 +15,8 @@ obj/
 /ewitchaven
 /etekwar
 
+/IRAD
+
 /arttool
 /bsuite
 /cacheinfo
@@ -86,6 +88,7 @@ texturecache
 *.exp
 *.lib
 perl.exe.stackdump
+*.bat
 
 xcuserdata/
 project.xcworkspace/
