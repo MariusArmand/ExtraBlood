@@ -200,7 +200,7 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
     // end marius
 
   //if (gStatCount[kStatFX] == 512)
-    if (gStatCount[kStatFX] >= 2048) // marius: allow more fx before starting to remove them
+    if (gStatCount[kStatFX] >= 4096) // marius: allow more fx before starting to remove them
     {
         int nSprite = headspritestat[kStatFX];
         while ((sprite[nSprite].flags & 32) && nSprite != -1) // scan through sprites for free slot
