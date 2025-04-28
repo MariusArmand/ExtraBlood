@@ -64,8 +64,8 @@ BEGIN
             VALUE "FileDescription", "ExtraBlood"
             VALUE "FileVersion", STRFILEVER
             VALUE "InternalName", "ExtraBlood"
-            VALUE "LegalCopyright", "Copyright � 2018 EDuke32 Developers, 1996, 2003 3D Realms Entertainment"
-            VALUE "LegalTrademarks", "Duke Nukem� is a Registered Trademark of Gearbox Software, LLC."
+            VALUE "LegalCopyright", "Copyright (c) 2018 EDuke32 Developers, 1996, 2003 3D Realms Entertainment"
+            VALUE "LegalTrademarks", "Duke Nukem (r) is a Registered Trademark of Gearbox Software, LLC."
             VALUE "OriginalFilename", "extrablood.exe"
             VALUE "ProductName", "ExtraBlood"
             VALUE "ProductVersion", STRPRODUCTVER
