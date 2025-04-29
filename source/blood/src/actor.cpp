@@ -3395,8 +3395,42 @@ void actKillDude(int nKillerSprite, spritetype *pSprite, DAMAGE_TYPE damageType,
         for (int i = 0; i < 3; i++)
             if (pDudeInfo->nGibType[i] > -1)
                 GibSprite(pSprite, (GIBTYPE)pDudeInfo->nGibType[i], NULL, NULL);
-        for (int i = 0; i < 4; i++)
-            fxSpawnBlood(pSprite, damage);
+        /*for (int i = 0; i < 4; i++)
+            fxSpawnBlood(pSprite, damage);*/
+        // marius: spawn more blood on explosion
+        switch (pSprite->type) {
+            case kDudeZombieAxeNormal:
+            case kDudeCultistTommy:
+            case kDudeCultistShotgun:
+            case kDudeCultistTesla:
+            case kDudeCultistTNT:
+            case kDudeBurningCultist:
+            case kDudeBurningZombieAxe:
+            case kDudeBurningZombieButcher:
+            case kDudeBurningInnocent:
+            case kDudeZombieButcher:
+            case kDudeGargoyleFlesh:
+            case kDudeHellHound:
+            case kDudeSpiderMother:
+            case kDudeGillBeast:
+            case kDudePodGreen:
+            case kDudePodFire:
+            case kDudePodMother:
+            case kDudeTentacleMother:
+            case kDudeCerberusTwoHead:
+            case kDudeCerberusOneHead:
+            case kDudeTchernobog:
+            case kDudeBeast:
+            case kDudeBurningBeast:
+                for (int i = 0; i < 50; i++)
+                    fxSpawnBlood(pSprite, damage);
+                break;
+            default:
+                for (int i = 0; i < 4; i++)
+                    fxSpawnBlood(pSprite, damage);
+                break;
+        }
+        // end marius
     }
     gKillMgr.AddKill(pSprite);
     actCheckRespawn(pSprite);
