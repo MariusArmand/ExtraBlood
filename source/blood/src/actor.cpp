@@ -3397,39 +3397,26 @@ void actKillDude(int nKillerSprite, spritetype *pSprite, DAMAGE_TYPE damageType,
                 GibSprite(pSprite, (GIBTYPE)pDudeInfo->nGibType[i], NULL, NULL);
         /*for (int i = 0; i < 4; i++)
             fxSpawnBlood(pSprite, damage);*/
-        // marius: spawn more blood on explosion
+        // marius: for default, spawn more blood on explosion
         switch (pSprite->type) {
-            case kDudeZombieAxeNormal:
-            case kDudeZombieAxeBuried:
-            case kDudeZombieAxeLaying:
-            case kDudeCultistTommy:
-            case kDudeCultistShotgun:
-            case kDudeCultistTesla:
-            case kDudeCultistTNT:
-            case kDudeBurningCultist:
-            case kDudeBurningZombieAxe:
-            case kDudeBurningZombieButcher:
-            case kDudeBurningInnocent:
-            case kDudeZombieButcher:
-            case kDudeGargoyleFlesh:
-            case kDudeHellHound:
-            case kDudeSpiderMother:
-            case kDudeGillBeast:
-            case kDudePodGreen:
-            case kDudePodFire:
-            case kDudePodMother:
-            case kDudeTentacleMother:
-            case kDudeCerberusTwoHead:
-            case kDudeCerberusOneHead:
-            case kDudeTchernobog:
-            case kDudeBeast:
-            case kDudeBurningBeast:
-                for (int i = 0; i < 50; i++)
+            case kDudePhantasm:
+            case kDudeHand:
+            case kDudeSpiderBrown:
+            case kDudeSpiderRed:
+            case kDudeBoneEel:
+            case kDudeBat:
+            case kDudeRat:
+            case kDudeTentacleGreen:
+            case kDudeTentacleFire:
+            case kDudeBurningTinyCaleb:
+                for (int i = 0; i < 4; i++)
                     fxSpawnBlood(pSprite, damage);
                 break;
             default:
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < 45; i++)
                     fxSpawnBlood(pSprite, damage);
+                for (int i = 0; i < 5; i++)
+                    GibSprite(pSprite, GIBTYPE_7, NULL, NULL);
                 break;
         }
         // end marius
@@ -6620,49 +6607,67 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
               /*for (int i = 0; i < pVectorData->bloodSplats; i++)
                     if (Chance(pVectorData->splatChance))
                         fxSpawnBlood(pSprite, pVectorData->dmg<<4);*/
-              // marius: splatIncrement (except for small enemies)
+              // marius: splatIncrement for default
+                static const int kMaxSplatIncrementBase = 5; // base for random splat increment
+                static const int kShotgunSplatChance = 0x4000; // 25% chance for shotgun-like effects
+
                 switch (pSprite->type) {
-                case kDudeZombieAxeNormal:
-                case kDudeZombieAxeBuried:
-                case kDudeZombieAxeLaying:
-                case kDudeCultistTommy:
-                case kDudeCultistShotgun:
-                case kDudeCultistTesla:
-                case kDudeCultistTNT:
-                case kDudeBurningCultist:
-                case kDudeBurningZombieAxe:
-                case kDudeBurningZombieButcher:
-                case kDudeBurningInnocent:
-                case kDudeZombieButcher:
-                case kDudeGargoyleFlesh:
-                case kDudeGargoyleStone:
-                case kDudeHellHound:
-                case kDudeSpiderBlack:
-                case kDudeSpiderMother:
-                case kDudeGillBeast:
-                case kDudePodGreen:
-                case kDudePodFire:
-                case kDudePodMother:
-                case kDudeTentacleMother:
-                case kDudeCerberusTwoHead:
-                case kDudeCerberusOneHead:
-                case kDudeTchernobog:
-                case kDudeBeast:
-                case kDudeBurningBeast:
-                    {
-                        int splatIncrement = rand() % (5 - gGameOptions.nDifficulty);
-                        splatIncrement = splatIncrement >> 1; // divide by 2 by shifting bits one position to the right
-                        int bloodSplats = pVectorData->bloodSplats + splatIncrement;
-                        for (int j = 0; j < bloodSplats; j++) 
-                        {
-                            fxSpawnBlood(pSprite, pVectorData->dmg<<4);
-                        }
-                    }          
-                    break;
-                default:
+                case kDudePhantasm:
+                case kDudeHand:
+                case kDudeSpiderBrown:
+                case kDudeSpiderRed:
+                case kDudeBoneEel:
+                case kDudeBat:
+                case kDudeRat:
+                case kDudeTentacleGreen:
+                case kDudeTentacleFire:
+                case kDudeBurningTinyCaleb:
                     for (int i = 0; i < pVectorData->bloodSplats; i++)
                         if (Chance(pVectorData->splatChance))
-                            fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                            fxSpawnBlood(pSprite, pVectorData->dmg<<4);       
+                    break;
+                default:
+                    {
+                        int splatIncrement = rand() % (kMaxSplatIncrementBase - gGameOptions.nDifficulty);
+                        splatIncrement = splatIncrement >> 1; // divide by 2 by shifting bits one position to the right
+                        int bloodSplats = pVectorData->bloodSplats + splatIncrement;
+
+                        if (IsPlayerSprite(pShooter)) { // shooter is a player
+                            int nPlayer = pShooter->type-kDudePlayer1; // calculate player index from shooter type
+                            dassert(nPlayer >= 0 && nPlayer < kMaxPlayers);
+                            PLAYER *pPlayer = &gPlayer[nPlayer];
+
+                            for (int j = 0; j < bloodSplats; j++) 
+                            {
+                                switch (pPlayer->curWeapon)
+                                {
+                                case kWeaponShotgun:
+                                    if (Chance(kShotgunSplatChance)) // apply a chance to limit blood splats when using shotgun
+                                        fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                    break;
+                                default:
+                                    fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                    break;
+                                }
+                            }
+                        }
+                        else // shooter is not a player
+                        {
+                            for (int j = 0; j < bloodSplats; j++) 
+                            {
+                                switch (pShooter->type) 
+                                {
+                                case kDudeCultistShotgun:
+                                    if (Chance(kShotgunSplatChance)) // apply a chance to limit blood splats when using shotgun
+                                        fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                    break;
+                                default:
+                                    fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                    break;
+                                }
+                            }
+                        }
+                    }   
                     break;
                 }          
               // end marius
