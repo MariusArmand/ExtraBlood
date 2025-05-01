@@ -6630,7 +6630,7 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                     break;
                 default:
                     {
-                        int splatIncrement = rand() % (kMaxSplatIncrementBase - gGameOptions.nDifficulty);
+                        int splatIncrement = kMaxSplatIncrementBase - gGameOptions.nDifficulty;
                         splatIncrement = splatIncrement >> 1; // divide by 2 by shifting bits one position to the right
                         int bloodSplats = pVectorData->bloodSplats + splatIncrement;
 
