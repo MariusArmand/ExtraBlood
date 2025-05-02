@@ -3413,9 +3413,9 @@ void actKillDude(int nKillerSprite, spritetype *pSprite, DAMAGE_TYPE damageType,
                     fxSpawnBlood(pSprite, damage);
                 break;
             default:
-                for (int i = 0; i < 45; i++)
+                for (int i = 0; i < 20; i++)
                     fxSpawnBlood(pSprite, damage);
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 2; i++)
                     GibSprite(pSprite, GIBTYPE_7, NULL, NULL);
                 break;
         }
