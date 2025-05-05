@@ -183,18 +183,22 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
             duration *= 20;
             break;
         case FX_35:
-            if (!duration) // no override duration given, load from global fx data struct
+            if (!duration)
                 duration = pFX->duration;
             duration *= 10;
             break;
         case FX_36: // blood splat
-            if (!duration) // no override duration given, load from global fx data struct
+            if (!duration)
                 duration = pFX->duration;
             duration *= 200;
             break;   
         case FX_39: // bullet casing
+            if (!duration)
+                duration = pFX->duration;
+            duration *= 2;
+            break;
         case FX_40: // shell casing
-            if (!duration) // no override duration given, load from global fx data struct
+            if (!duration)
                 duration = pFX->duration;
             duration *= 5;
             break;
@@ -220,7 +224,7 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
     else // extrablood code
     {
         // allow more fx before starting to remove them
-        if (gStatCount[kStatFX] >= 4096)
+        if (gStatCount[kStatFX] >= 3072)
         {
             int nSprite = headspritestat[kStatFX];
             while ((sprite[nSprite].flags & 32) && nSprite != -1) // scan through sprites for free slot

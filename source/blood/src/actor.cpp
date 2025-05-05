@@ -6636,6 +6636,7 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                     // splatIncrement for default
                     static const int kMaxSplatIncrementBase = 5; // base for random splat increment
                     static const int kShotgunSplatChance = 0x4000; // 25% chance for shotgun-like effects
+                    static const int kTommySplatChance = 0x4000; // 25% chance for tommy-like effects                    
 
                     switch (pSprite->type) {
                     case kDudePhantasm:
@@ -6671,6 +6672,10 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                                         if (Chance(kShotgunSplatChance)) // apply a chance to limit blood splats when using shotgun
                                             fxSpawnBlood(pSprite, pVectorData->dmg<<4);
                                         break;
+                                    case kWeaponTommy:
+                                        if (Chance(kTommySplatChance)) // apply a chance to limit blood splats when using tommy
+                                            fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                        break;
                                     default:
                                         fxSpawnBlood(pSprite, pVectorData->dmg<<4);
                                         break;
@@ -6684,8 +6689,14 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                                     switch (pShooter->type) 
                                     {
                                     case kDudeCultistShotgun:
+                                    case kDudeCultistShotgunProne:
                                         if (Chance(kShotgunSplatChance)) // apply a chance to limit blood splats when using shotgun
                                             fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                        break;
+                                    case kDudeCultistTommy:
+                                    case kDudeCultistTommyProne:
+                                        if (Chance(kTommySplatChance)) // apply a chance to limit blood splats when using tommy
+                                        fxSpawnBlood(pSprite, pVectorData->dmg<<4);
                                         break;
                                     default:
                                         fxSpawnBlood(pSprite, pVectorData->dmg<<4);
