@@ -51,6 +51,7 @@ union KEYFLAGS
         unsigned int prevWeapon : 1;
         unsigned int nextWeapon : 1;
         unsigned int holsterWeapon : 1;
+        unsigned int dualWield : 1; // marius, gunslinger mode
         unsigned int lookCenter : 1;
         unsigned int lookLeft : 1;
         unsigned int lookRight : 1;

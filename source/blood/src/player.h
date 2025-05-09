@@ -178,6 +178,8 @@ struct PLAYER
     int                 weaponState;
     int                 weaponAmmo;  //rename
     bool                hasWeapon[kWeaponMax];
+    bool                hasDoubleWeapon[kWeaponMax]; // marius, gunslinger mode
+    bool                isDualWielding[kWeaponMax]; // marius, gunslinger mode
     int                 weaponMode[kWeaponMax];
     int                 weaponOrder[2][kWeaponMax];
     //int               at149[14];

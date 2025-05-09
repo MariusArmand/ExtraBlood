@@ -84,7 +84,7 @@ FXDATA gFXData[] = {
     { kCallbackNone, 2, 0, 1, -18641, 8192, 600, 1128, 12, 12, 514, -16, 0 }, // bubble 2
     { kCallbackNone, 2, 0, 1, -9320, 8192, 600, 1128, 8, 8, 514, -16, 0 }, // bubble 3
     { kCallbackNone, 2, 0, 1, -18641, 8192, 600, 1131, 32, 32, 514, -16, 0 },
-    { kCallbackFXBloodBits, 2, 0, 3, 27962, 4096, 480, 733, 32, 32, 0, -16, 0 },
+    { kCallbackFXBloodBits, 2, 0, 3, 27962, 4096, 480, 733, 32, 32, 0, -16, 0 }, // blood spray
     { kCallbackNone, 1, 0, 3, 18641, 4096, 120, 2261, 12, 12, 0, -128, 0 },
     { kCallbackNone, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 0, 3, 58254, 3328, 480, 2185, 48, 48, 0, 0, 0 },
@@ -166,9 +166,7 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
     FXDATA *pFX = &gFXData[nFx];
     // marius
     if (!VanillaMode()) // extrablood code
-    {       
-        gFXData[27].gravity = 80000; // make blood heavier
-        
+    {
         // increase duration of fx
         switch (nFx)
         {
@@ -274,6 +272,24 @@ void CFX::fxProcess(void)
         dassert(nSector >= 0 && nSector < kMaxSectors);
         dassert(pSprite->type < kFXMax);
         FXDATA *pFXData = &gFXData[pSprite->type];
+        // marius
+        // embed/tweak NotBlood underwater gravity behaviour
+        vec3_t oldPos = pSprite->xyz;
+        int nGravity = pFXData->gravity;
+        int nAirDrag = pFXData->airdrag;
+        if (!VanillaMode()) // extrablood code
+        {
+            nAirDrag >>= 1; // make blood drag 
+            if (!IsUnderwaterSector(pSprite->sectnum) && pSprite->type == FX_27)
+            {
+                nGravity = 80000; // make blood heavier
+            }
+            else if (pSprite->type == FX_27)
+            {
+                nGravity = 1250; // make blood lighter
+            }
+        }
+        // end marius
         actAirDrag(pSprite, pFXData->airdrag);
         if (xvel[nSprite])
             pSprite->x += xvel[nSprite]>>12;
@@ -281,6 +297,23 @@ void CFX::fxProcess(void)
             pSprite->y += yvel[nSprite]>>12;
         if (zvel[nSprite])
             pSprite->z += zvel[nSprite]>>8;
+        // marius
+        // embed NotBlood underwater gravity behaviour
+		const bool bCasingType = (pSprite->type >= FX_37) && (pSprite->type <= FX_42);
+		if (!VanillaMode() && bCasingType && IsUnderwaterSector(pSprite->sectnum)) // lower gravity by 75% underwater (only for bullet casings)
+			nGravity >>= 2;
+        // embed NotBlood casing bounce back behaviour
+		if (!VanillaMode() && bCasingType) // check if new xy position is within a wall
+		{
+			if (!cansee(oldPos.x, oldPos.y, oldPos.z, pSprite->sectnum, pSprite->x, pSprite->y, oldPos.z, pSprite->sectnum)) // if new position has clipped into wall, invert velocity and continue
+			{
+				xvel[nSprite] = -((xvel[nSprite]>>1)+(xvel[nSprite]>>2)); // lower velocity by 75% and invert
+				yvel[nSprite] = -((yvel[nSprite]>>1)+(yvel[nSprite]>>2));
+				pSprite->x = oldPos.x + (xvel[nSprite]>>12);
+				pSprite->y = oldPos.y + (yvel[nSprite]>>12);
+			}
+		}
+        // end marius	
         // Weird...
         if (xvel[nSprite] || (yvel[nSprite] && pSprite->z >= sector[pSprite->sectnum].floorz))
         {
@@ -328,7 +361,17 @@ void CFX::fxProcess(void)
                 continue;
             }
         }
-        zvel[nSprite] += pFXData->gravity;
+        // marius
+        if (VanillaMode()) // original code
+        {
+            zvel[nSprite] += pFXData->gravity;
+        }
+        else // extrablood code
+        {
+            // use tweaked gravity
+            zvel[nSprite] += nGravity;
+        }
+        // end marius
     }
 }
 
@@ -346,9 +389,32 @@ void fxSpawnBlood(spritetype *pSprite, int a2)
     if (pBlood)
     {
         pBlood->ang = 1024;
-        xvel[pBlood->index] = Random2(0x6aaaa);
-        yvel[pBlood->index] = Random2(0x6aaaa);
-        zvel[pBlood->index] = -((int)Random(0x10aaaa))-100;
+        // marius
+        if (VanillaMode()) // original code
+        {
+            xvel[pBlood->index] = Random2(0x6aaaa);
+            yvel[pBlood->index] = Random2(0x6aaaa);
+            zvel[pBlood->index] = -((int)Random(0x10aaaa))-100;
+        }
+        else // extrablood code
+        {
+            if (IsUnderwaterSector(pSprite->sectnum))
+            {
+                // Make bloodspray more dense underwater
+                // Scale velocities (bigger nr is bigger spread)                
+                int nScaleFactor = 80; 
+                xvel[pBlood->index] = mulscale8(Random2(0x6aaaa), nScaleFactor);
+                yvel[pBlood->index] = mulscale8(Random2(0x6aaaa), nScaleFactor);
+                zvel[pBlood->index] = mulscale8(-((int)Random(0x10aaaa)) - 100, nScaleFactor);
+            }
+            else
+            {
+                xvel[pBlood->index] = Random2(0x6aaaa);
+                yvel[pBlood->index] = Random2(0x6aaaa);
+                zvel[pBlood->index] = -((int)Random(0x10aaaa))-100;
+            }
+        }
+        // end marius
         evPost(pBlood->index, 3, 8, kCallbackFXBloodSpurt);
     }
 }

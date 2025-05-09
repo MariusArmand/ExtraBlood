@@ -87,6 +87,7 @@ char gamefunctions[NUMGAMEFUNCTIONS][MAXGAMEFUNCLEN] =
    "Next_Weapon",
    "Previous_Weapon",
    "Holster_Weapon",
+   "Dual_Wield", // marius, gunslinger mode
    "Show_Opponents_Weapon",
    "BeastVision",
    "CrystalBall",
@@ -151,6 +152,7 @@ const char keydefaults[NUMGAMEFUNCTIONS*2][MAXGAMEFUNCLEN] =
    "'", "",
    ";", "",
    "ScrLck", "",
+   "G", "", // marius, gunslinger mode
    "Y", "",
    "B", "",
    "C", "",
@@ -213,6 +215,7 @@ const char oldkeydefaults[NUMGAMEFUNCTIONS*2][MAXGAMEFUNCLEN] =
    "'", "",
    ";", "",
    "ScrLck", "",
+   "G", "", // marius, gunslinger mode
    "W", "",
    "B", "",
    "C", "",

@@ -3049,8 +3049,37 @@ void actKillDude(int nKillerSprite, spritetype *pSprite, DAMAGE_TYPE damageType,
         break;
         case kDudeCultistShotgun: {
             int nRand = Random(100);
-            if (nRand <= 10) actDropObject(pSprite, kItemWeaponSawedoff);
-            else if (nRand <= 50) actDropObject(pSprite, kItemAmmoSawedoffFew);
+            // marius
+            // gunslinger mode
+            if (VanillaMode()) // original code
+            {                
+                if (nRand <= 10) actDropObject(pSprite, kItemWeaponSawedoff);
+                else if (nRand <= 50) actDropObject(pSprite, kItemAmmoSawedoffFew);
+            }
+            else // extrablood code
+            {
+                if (IsPlayerSprite(pKillerSprite)) 
+                {
+                    PLAYER *pPlayer = &gPlayer[pKillerSprite->type - kDudePlayer1];
+                    if (!pPlayer->hasDoubleWeapon[kWeaponShotgun])
+                    {
+                        // as long as we don't have double shotguns increase the chance to drop a shotgun
+                        if (nRand <= 50) actDropObject(pSprite, kItemWeaponSawedoff);
+                        else if (nRand <= 70) actDropObject(pSprite, kItemAmmoSawedoffFew);
+                    }
+                    else
+                    {
+                        if (nRand <= 10) actDropObject(pSprite, kItemWeaponSawedoff);
+                        else if (nRand <= 50) actDropObject(pSprite, kItemAmmoSawedoffFew);
+                    }
+                }
+                else
+                {
+                    if (nRand <= 10) actDropObject(pSprite, kItemWeaponSawedoff);
+                    else if (nRand <= 50) actDropObject(pSprite, kItemAmmoSawedoffFew);
+                }
+            }
+            // end marius
         }
         break;
     }

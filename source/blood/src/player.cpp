@@ -1012,7 +1012,18 @@ void playerReset(PLAYER *pPlayer)
         pPlayer->hasWeapon[i] = gInfiniteAmmo;
         pPlayer->weaponMode[i] = 0;
     }
-    pPlayer->hasWeapon[kWeaponPitchfork] = 1;
+    pPlayer->hasWeapon[kWeaponPitchfork] = 1;    
+    // marius
+    // gunslinger mode
+    if (!VanillaMode()) // extrablood code
+    {
+        for (int i = 0; i < kWeaponMax; i++)
+        {
+            pPlayer->hasDoubleWeapon[i] = 0;
+            pPlayer->isDualWielding[i] = 0;
+        }
+    }
+    // end marius
     pPlayer->curWeapon = kWeaponNone;
     pPlayer->qavCallback = -1;
     pPlayer->input.newWeapon = kWeaponPitchfork;
@@ -1314,6 +1325,10 @@ char PickupItem(PLAYER *pPlayer, spritetype *pItem) {
 char PickupAmmo(PLAYER* pPlayer, spritetype* pAmmo) {
     AMMOITEMDATA* pAmmoItemData = &gAmmoItemData[pAmmo->type - kItemAmmoBase];
     int nAmmoType = pAmmoItemData->type;
+    // marius
+    // gunslinger mode
+    int nPrevAmmoCount = pPlayer->ammoCount[nAmmoType];
+    // end marius
 
     if (pPlayer->ammoCount[nAmmoType] >= gAmmoInfo[nAmmoType].max) return 0;
     #ifdef NOONE_EXTENSIONS
@@ -1324,6 +1339,24 @@ char PickupAmmo(PLAYER* pPlayer, spritetype* pAmmo) {
         pPlayer->ammoCount[nAmmoType] = ClipHigh(pPlayer->ammoCount[nAmmoType]+pAmmoItemData->count, gAmmoInfo[nAmmoType].max);
 
     if (pAmmoItemData->weaponType)  pPlayer->hasWeapon[pAmmoItemData->weaponType] = 1;
+    // marius
+    // gunslinger mode
+    if (!VanillaMode())
+    {
+        switch (pPlayer->curWeapon) {
+        case kWeaponShotgun:
+            if (pPlayer->isDualWielding[pPlayer->curWeapon])
+            {
+                if (pPlayer->ammoCount[nAmmoType] >= 4 && nPrevAmmoCount < 4 && nAmmoType == 2)
+                {
+                    pPlayer->input.newWeapon = pPlayer->curWeapon;
+                    WeaponRaise(pPlayer);
+                }
+            }
+            break;
+        }
+    }
+    //end marius    
     sfxPlay3DSound(pPlayer->pSprite, 782, -1, 0);
     return 1;
 }
@@ -1332,6 +1365,17 @@ char PickupWeapon(PLAYER *pPlayer, spritetype *pWeapon) {
     WEAPONITEMDATA *pWeaponItemData = &gWeaponItemData[pWeapon->type - kItemWeaponBase];
     int nWeaponType = pWeaponItemData->type;
     int nAmmoType = pWeaponItemData->ammoType;
+    // marius
+    // gunslinger mode
+    int nPrevAmmoCount = pPlayer->ammoCount[nAmmoType];
+    if (!VanillaMode() && !pPlayer->hasDoubleWeapon[nWeaponType] && pPlayer->hasWeapon[nWeaponType])
+    {
+        pPlayer->hasDoubleWeapon[nWeaponType] = 1;
+        pPlayer->isDualWielding[nWeaponType] = 1;
+        pPlayer->input.newWeapon = pPlayer->curWeapon;
+        WeaponRaise(pPlayer);
+    }
+    // end marius
     if (!pPlayer->hasWeapon[nWeaponType] || gGameOptions.nWeaponSettings == 2 || gGameOptions.nWeaponSettings == 3) {
         if ((pWeapon->type == kItemWeaponLifeLeech) && (gGameOptions.nGameType >= kGameTypeBloodBath) && findDroppedLeech(pPlayer, NULL))
             return 0;
@@ -1361,6 +1405,24 @@ char PickupWeapon(PLAYER *pPlayer, spritetype *pWeapon) {
     #endif
     else
         pPlayer->ammoCount[nAmmoType] = ClipHigh(pPlayer->ammoCount[nAmmoType]+pWeaponItemData->count, gAmmoInfo[nAmmoType].max);
+    // marius
+    // gunslinger mode
+    if (!VanillaMode())
+    {
+        switch (pPlayer->curWeapon) {
+        case kWeaponShotgun:
+            if (pPlayer->isDualWielding[pPlayer->curWeapon])
+            {
+                if (pPlayer->ammoCount[nAmmoType] >= 4 && nPrevAmmoCount < 4 && nAmmoType == 2)
+                {
+                    pPlayer->input.newWeapon = pPlayer->curWeapon;
+                    WeaponRaise(pPlayer);
+                }
+            }
+            break;
+        }
+    }
+    //end marius
 
     sfxPlay3DSound(pPlayer->pSprite, 777, -1, 0);
     return 1;
@@ -1949,6 +2011,29 @@ void ProcessInput(PLAYER *pPlayer)
             viewSetMessage("Holstering weapon");
         }
     }
+    // marius
+    // gunslinger mode
+    if (!VanillaMode() && pInput->keyFlags.dualWield)
+    {
+        pInput->keyFlags.dualWield = 0;
+        if (pPlayer->curWeapon == kWeaponShotgun)
+        {
+            int nWeaponType = kWeaponShotgun;
+            if (pPlayer->isDualWielding[nWeaponType])
+            {
+                pPlayer->isDualWielding[nWeaponType] = 0;
+            }
+            else
+            {
+                pPlayer->isDualWielding[nWeaponType] = 1;
+                if (Chance(0x4000))
+                    sfxPlay3DSound(pPlayer->pSprite, 3038, -1, 0);
+            }
+            pPlayer->input.newWeapon = pPlayer->curWeapon;
+            WeaponRaise(pPlayer);
+        }     
+    }
+    // end marius
     CheckPickUp(pPlayer);
 }
 

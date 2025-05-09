@@ -258,7 +258,11 @@ void WeaponDraw(PLAYER *pPlayer, int a2, int x, int y, int a5)
     int v4;
     if (pPlayer->weaponTimer == 0)
     {
-        if (((pPlayer->weaponState == -1) || (pPlayer->curWeapon == kWeaponShotgun && pPlayer->weaponState == 7)) && !VanillaMode()) // if shotgun with guns akimbo, or ran out of ammo, set to last seq frame
+        // marius
+        // gunslinger mode
+        //if (((pPlayer->weaponState == -1) || (pPlayer->curWeapon == kWeaponShotgun && pPlayer->weaponState == 7)) && !VanillaMode()) // if shotgun with guns akimbo, or ran out of ammo, set to last seq frame
+        if (((pPlayer->weaponState == -1) || (pPlayer->curWeapon == kWeaponShotgun && (pPlayer->weaponState == 7 || (pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])))) && !VanillaMode()) // if shotgun with guns akimbo or gunslinger mode, or ran out of ammo, set to last seq frame
+        // end marius
             v4 = pQAV->at10-1;
         else
             v4 = (int)totalclock % pQAV->at10;
@@ -547,7 +551,11 @@ void WeaponRaise(PLAYER *pPlayer)
         }
         break;
     case kWeaponShotgun:
-        if (powerupCheck(pPlayer, kPwUpTwoGuns))
+        // marius
+        // gunslinger mode
+        //if (powerupCheck(pPlayer, kPwUpTwoGuns))
+        if (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])) // marius, add double weapon handling
+        // end marius
         {
             if (gInfiniteAmmo || pPlayer->ammoCount[2] >= 4)
                 StartQAV(pPlayer, 59, -1, 0);
@@ -941,11 +949,25 @@ void WeaponUpdateState(PLAYER *pPlayer)
         switch (vb)
         {
         case 6:
-            if (powerupCheck(pPlayer, kPwUpTwoGuns) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)))
-                pPlayer->weaponState = 7;
-            else
-                pPlayer->weaponState = 1;
-            break;
+            // marius
+            // gunslinger mode
+            if (VanillaMode()) // original code
+            {
+                if (powerupCheck(pPlayer, kPwUpTwoGuns) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)))
+                    pPlayer->weaponState = 7;
+                else
+                    pPlayer->weaponState = 1;
+                break;
+            }
+            else // extrablood code
+            {
+                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)))
+                    pPlayer->weaponState = 7;
+                else
+                    pPlayer->weaponState = 1;
+                break;
+            }
+            // end marius
         case 7:
             pPlayer->weaponQav = 60;
             break;
@@ -954,7 +976,11 @@ void WeaponUpdateState(PLAYER *pPlayer)
             {
                 sfxPlay3DSound(pPlayer->pSprite, 410, 3, 2);
                 StartQAV(pPlayer, 57, nClientEjectShell, 0);
-                if (powerupCheck(pPlayer, kPwUpTwoGuns) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)) && !VanillaMode()) // if we now have enough ammo to carry two shotguns, update the gun state and give back our second shotgun
+                // marius
+                // gunslinger mode
+                //if (powerupCheck(pPlayer, kPwUpTwoGuns) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)) && !VanillaMode()) // if we now have enough ammo to carry two shotguns, update the gun state and give back our second shotgun
+                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)) && !VanillaMode()) // if we now have enough ammo to carry two shotguns, update the gun state and give back our second shotgun
+                // end marius
                     pPlayer->weaponState = 7;
                 else if (gInfiniteAmmo || pPlayer->ammoCount[2] > 1)
                     pPlayer->weaponState = 3;

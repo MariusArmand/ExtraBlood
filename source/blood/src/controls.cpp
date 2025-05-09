@@ -125,6 +125,7 @@ void ctrlInit(void)
     CONTROL_DefineFlag(gamefunc_Next_Weapon, false);
     CONTROL_DefineFlag(gamefunc_Previous_Weapon, false);
     CONTROL_DefineFlag(gamefunc_Holster_Weapon, false);
+    CONTROL_DefineFlag(gamefunc_Dual_Wield, false); // marius, gunslinger mode
     CONTROL_DefineFlag(gamefunc_Show_Opponents_Weapon, false);
     CONTROL_DefineFlag(gamefunc_BeastVision, false);
     CONTROL_DefineFlag(gamefunc_CrystalBall, false);
@@ -429,6 +430,15 @@ void ctrlGetInput(void)
         CONTROL_ClearButton(gamefunc_Holster_Weapon);
         gInput.keyFlags.holsterWeapon = 1;
     }
+
+    // marius
+    // gunslinger mode
+    if (BUTTON(gamefunc_Dual_Wield))
+    {
+        CONTROL_ClearButton(gamefunc_Dual_Wield);
+        gInput.keyFlags.dualWield = 1;
+    }
+    // end marius
 
     int const run = gRunKeyMode ? (BUTTON(gamefunc_Run) | gAutoRun) : (BUTTON(gamefunc_Run) ^ gAutoRun);
     int const run2 = BUTTON(gamefunc_Run);
