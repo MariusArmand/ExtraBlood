@@ -1,6 +1,10 @@
 # ExtraBlood
 Fork of the Reverse-engineered port of the Build game Blood [[NBlood](https://github.com/NBlood/NBlood)] using EDuke32 engine technology and development principles.
-Goal is to add more and longer lasting gore.
+
+### Distinctive features
+- More and longer lasting gore
+- Dual wield shotguns or tommyguns (toggled by configurable keyboard key)
+- Akimbo power-up is replaced by Super Armor
 
 ### Installing
 1. Extract ExtraBlood to a new directory
