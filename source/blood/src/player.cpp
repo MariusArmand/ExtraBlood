@@ -1372,8 +1372,11 @@ char PickupWeapon(PLAYER *pPlayer, spritetype *pWeapon) {
     {
         pPlayer->hasDoubleWeapon[nWeaponType] = 1;
         pPlayer->isDualWielding[nWeaponType] = 1;
-        pPlayer->input.newWeapon = pPlayer->curWeapon;
-        WeaponRaise(pPlayer);
+        if (pPlayer->curWeapon == nWeaponType)
+        {
+            pPlayer->input.newWeapon = pPlayer->curWeapon;
+            WeaponRaise(pPlayer);
+        }
     }
     // end marius
     if (!pPlayer->hasWeapon[nWeaponType] || gGameOptions.nWeaponSettings == 2 || gGameOptions.nWeaponSettings == 3) {
@@ -2016,9 +2019,11 @@ void ProcessInput(PLAYER *pPlayer)
     if (!VanillaMode() && pInput->keyFlags.dualWield)
     {
         pInput->keyFlags.dualWield = 0;
-        if (pPlayer->curWeapon == kWeaponShotgun)
+        switch (pPlayer->curWeapon)
         {
-            int nWeaponType = kWeaponShotgun;
+        case kWeaponShotgun:
+        case kWeaponTommy:
+            int nWeaponType = pPlayer->curWeapon;
             if (pPlayer->isDualWielding[nWeaponType])
             {
                 pPlayer->isDualWielding[nWeaponType] = 0;
@@ -2031,6 +2036,7 @@ void ProcessInput(PLAYER *pPlayer)
             }
             pPlayer->input.newWeapon = pPlayer->curWeapon;
             WeaponRaise(pPlayer);
+            break;
         }     
     }
     // end marius
