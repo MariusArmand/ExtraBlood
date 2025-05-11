@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "network.h"
 #include "player.h"
 #include "view.h"
+#include "weapon.h" // marius, gunslinger mode
 
 CPlayerMsg gPlayerMsg;
 CCheatMgr gCheatMgr;
@@ -133,6 +134,34 @@ void SetWeapons(bool stat)
         viewSetMessage("You have no weapons.");
     }
 }
+
+// marius
+// gunslinger mode
+void SetDualWield(bool stat)
+{
+    if (!VanillaMode()) // extrablood code
+    {
+        if (stat)
+        {
+            for (int i = 0; i < kWeaponMax; i++)
+            {
+                gMe->hasDoubleWeapon[i] = 1;
+                gMe->isDualWielding[i] = 1;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < kWeaponMax; i++)
+            {
+                gMe->hasDoubleWeapon[i] = 0;
+                gMe->isDualWielding[i] = 0;
+            }            
+        }
+        gMe->input.newWeapon = gMe->curWeapon;
+        WeaponRaise(gMe);
+    }
+}
+// end marius
 
 void SetToys(bool stat)
 {
@@ -779,6 +808,10 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char* pzArgs)
         break;
     case kCheatIdaho:
         SetWeapons(true);
+        // marius
+        // gunslinger mode
+        SetDualWield(true);
+        // end marius        
         break;
     case kCheatKevorkian:
         actDamageSprite(gMe->nSprite, gMe->pSprite, kDamageBullet, 8000);
@@ -868,13 +901,25 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char* pzArgs)
     case kCheatLaraCroft:
         SetInfiniteAmmo(!gInfiniteAmmo);
         SetWeapons(gInfiniteAmmo);
+        // marius
+        // gunslinger mode
+        SetDualWield(true);
+        // end marius
         break;
     case kCheatHongKong:
         SetWeapons(true);
+        // marius
+        // gunslinger mode
+        SetDualWield(true);
+        // end marius
         SetInfiniteAmmo(true);
         break;
     case kCheatMontana:
         SetWeapons(true);
+        // marius
+        // gunslinger mode
+        SetDualWield(true);
+        // end marius
         SetToys(true);
         break;
     case kCheatBunz:
@@ -891,6 +936,10 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char* pzArgs)
         SetInfiniteAmmo(false);
         SetMap(false);
         SetWeapons(false);
+        // marius
+        // gunslinger mode
+        SetDualWield(false);
+        // end marius
         SetAmmo(false);
         SetArmor(false);
         SetToys(false);
