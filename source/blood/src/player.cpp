@@ -1022,8 +1022,6 @@ void playerReset(PLAYER *pPlayer)
             pPlayer->hasDoubleWeapon[i] = 0;
             pPlayer->isDualWielding[i] = 0;
         }
-        pPlayer->weaponPickupDelayTime = 0;
-        pPlayer->pendingPickupWeaponType = -1;
     }
     // end marius
     pPlayer->curWeapon = kWeaponNone;
@@ -1369,34 +1367,16 @@ char PickupWeapon(PLAYER *pPlayer, spritetype *pWeapon) {
     int nAmmoType = pWeaponItemData->ammoType;
     // marius
     // gunslinger mode
-    static const int pickupDelay = 30; // delay in ticks
     int nPrevAmmoCount = pPlayer->ammoCount[nAmmoType];
 
     if (!VanillaMode() && !pPlayer->hasDoubleWeapon[nWeaponType] && pPlayer->hasWeapon[nWeaponType])
     {
-        // start delay if no pickup is pending
-        if (pPlayer->weaponPickupDelayTime <= 0)
+        pPlayer->hasDoubleWeapon[nWeaponType] = 1;
+        pPlayer->isDualWielding[nWeaponType] = 1;
+        if (pPlayer->curWeapon == nWeaponType)
         {
-            pPlayer->pendingPickupWeaponType = nWeaponType;
-            pPlayer->weaponPickupDelayTime = pickupDelay;
-        }
-
-        // decrement delay timer
-        pPlayer->weaponPickupDelayTime = ClipLow(pPlayer->weaponPickupDelayTime - kTicsPerFrame, 0);
-
-        // grant dual-wield when delay expires
-        if (pPlayer->pendingPickupWeaponType == nWeaponType && pPlayer->weaponPickupDelayTime <= 0)
-        {
-            pPlayer->hasDoubleWeapon[nWeaponType] = 1;
-            pPlayer->isDualWielding[nWeaponType] = 1;
-            sfxPlay3DSound(pPlayer->pSprite, 777, -1, 0);
-            if (pPlayer->curWeapon == nWeaponType)
-            {
-                pPlayer->input.newWeapon = pPlayer->curWeapon;
-                WeaponRaise(pPlayer);
-            }
-            pPlayer->pendingPickupWeaponType = -1; // clear pending state
-            pPlayer->weaponPickupDelayTime = 0; // reset timer
+            pPlayer->input.newWeapon = pPlayer->curWeapon;
+            WeaponRaise(pPlayer);
         }
     }
     // end marius
