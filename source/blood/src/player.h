@@ -180,6 +180,8 @@ struct PLAYER
     bool                hasWeapon[kWeaponMax];
     bool                hasDoubleWeapon[kWeaponMax]; // marius, gunslinger mode
     bool                isDualWielding[kWeaponMax]; // marius, gunslinger mode
+    int                 weaponPickupDelayTime; // marius, gunslinger mode
+    int                 pendingPickupWeaponType; // marius, gunslinger mode
     int                 weaponMode[kWeaponMax];
     int                 weaponOrder[2][kWeaponMax];
     //int               at149[14];
