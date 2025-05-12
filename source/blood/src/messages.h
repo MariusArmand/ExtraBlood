@@ -160,6 +160,7 @@ extern CCheatMgr gCheatMgr;
 
 void SetAmmo(bool stat);
 void SetWeapons(bool stat);
+void SetDualWield(bool stat); // marius, gunslinger mode
 void SetToys(bool stat);
 void SetArmor(bool stat);
 void SetKeys(bool stat);

@@ -146,7 +146,7 @@ void SetDualWield(bool stat)
             for (int i = 0; i < kWeaponMax; i++)
             {
                 gMe->hasDoubleWeapon[i] = 1;
-                gMe->isDualWielding[i] = 1;
+                gMe->hasDualWieldToggled[i] = 1;
             }
         }
         else
@@ -154,7 +154,7 @@ void SetDualWield(bool stat)
             for (int i = 0; i < kWeaponMax; i++)
             {
                 gMe->hasDoubleWeapon[i] = 0;
-                gMe->isDualWielding[i] = 0;
+                gMe->hasDualWieldToggled[i] = 0;
             }            
         }
         gMe->input.newWeapon = gMe->curWeapon;

@@ -268,7 +268,7 @@ void WeaponDraw(PLAYER *pPlayer, int a2, int x, int y, int a5)
         // marius
         // gunslinger mode
         //if (((pPlayer->weaponState == -1) || (pPlayer->curWeapon == kWeaponShotgun && pPlayer->weaponState == 7)) && !VanillaMode()) // if shotgun with guns akimbo, or ran out of ammo, set to last seq frame
-        if (((pPlayer->weaponState == -1) || (pPlayer->curWeapon == kWeaponShotgun && (pPlayer->weaponState == 7 || (pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])))) && !VanillaMode()) // if shotgun with guns akimbo or gunslinger mode, or ran out of ammo, set to last seq frame
+        if (((pPlayer->weaponState == -1) || (pPlayer->curWeapon == kWeaponShotgun && (pPlayer->weaponState == 7  || IsDualWielding(pPlayer, kWeaponShotgun)))) && !VanillaMode()) // if shotgun with guns akimbo or gunslinger mode, or ran out of ammo, set to last seq frame
         // end marius
             v4 = pQAV->at10-1;
         else
@@ -561,7 +561,7 @@ void WeaponRaise(PLAYER *pPlayer)
         // marius
         // gunslinger mode
         //if (powerupCheck(pPlayer, kPwUpTwoGuns))
-        if (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])) // add double weapon handling
+        if (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponShotgun))) // add double weapon handling
         // end marius
         {
             if (gInfiniteAmmo || pPlayer->ammoCount[2] >= 4)
@@ -592,7 +592,7 @@ void WeaponRaise(PLAYER *pPlayer)
         // marius
         // gunslinger mode
         //if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 3, 2))
-        if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && pPlayer->hasDoubleWeapon[kWeaponTommy] && pPlayer->isDualWielding[kWeaponTommy])) && checkAmmo2(pPlayer, 3, 2)) // add double weapon handling
+        if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTommy))) && checkAmmo2(pPlayer, 3, 2)) // add double weapon handling
         // end marius
         {
             pPlayer->weaponState = 1;
@@ -612,7 +612,11 @@ void WeaponRaise(PLAYER *pPlayer)
         }
         break;
     case kWeaponFlare:
-        if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 1, 2))
+        // mariusù
+        // gunslinger mode
+        //if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 1, 2))
+        if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponFlare))) && checkAmmo2(pPlayer, 1, 2))
+        // end marius
         {
             StartQAV(pPlayer, 45, -1, 0);
             pPlayer->weaponState = 3;
@@ -627,7 +631,11 @@ void WeaponRaise(PLAYER *pPlayer)
         if (checkAmmo2(pPlayer, 7, 1))
         {
             pPlayer->weaponState = 2;
-            if (powerupCheck(pPlayer, kPwUpTwoGuns))
+            // marius
+            // gunslinger mode
+            //if (powerupCheck(pPlayer, kPwUpTwoGuns))
+            if (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla)))
+            // end marius
                 StartQAV(pPlayer, 82, -1, 0);
             else
                 StartQAV(pPlayer, 74, -1, 0);
@@ -802,7 +810,7 @@ void WeaponLower(PLAYER *pPlayer)
         // marius
         // gunslinger mode
         //if (powerupCheck(pPlayer, kPwUpTwoGuns) && (VanillaMode() || (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4))))
-        if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])) && (VanillaMode() || (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4))))
+        if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponShotgun))) && (VanillaMode() || (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4))))
         // end marius
             StartQAV(pPlayer, 63, -1, 0);
         else
@@ -812,14 +820,18 @@ void WeaponLower(PLAYER *pPlayer)
         // marius
         // gunslinger mode
         //if (powerupCheck(pPlayer, kPwUpTwoGuns) && pPlayer->weaponState == 1)
-        if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && pPlayer->hasDoubleWeapon[kWeaponTommy] && pPlayer->isDualWielding[kWeaponTommy])) && pPlayer->weaponState == 1)
+        if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTommy))) && pPlayer->weaponState == 1)
         // end marius
             StartQAV(pPlayer, 72, -1, 0);
         else
             StartQAV(pPlayer, 68, -1, 0);
         break;
     case kWeaponFlare:
-        if (powerupCheck(pPlayer, kPwUpTwoGuns) && pPlayer->weaponState == 3)
+        // marius
+        // gunslinger mode
+        //if (powerupCheck(pPlayer, kPwUpTwoGuns) && pPlayer->weaponState == 3)
+        if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponFlare))) && pPlayer->weaponState == 3)
+        // end marius
             StartQAV(pPlayer, 49, -1, 0);
         else
             StartQAV(pPlayer, 44, -1, 0);
@@ -828,7 +840,11 @@ void WeaponLower(PLAYER *pPlayer)
         StartQAV(pPlayer, 109, -1, 0);
         break;
     case kWeaponTesla:
-        if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+        // marius
+        // gunslinger mode
+        //if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+        if (checkAmmo2(pPlayer, 7, 10) && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla))))
+        // end marius    
             StartQAV(pPlayer, 88, -1, 0);
         else
             StartQAV(pPlayer, 81, -1, 0);
@@ -979,7 +995,7 @@ void WeaponUpdateState(PLAYER *pPlayer)
             }
             else // extrablood code
             {
-                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)))
+                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || IsDualWielding(pPlayer, kWeaponShotgun)) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)))
                     pPlayer->weaponState = 7;
                 else
                     pPlayer->weaponState = 1;
@@ -997,7 +1013,7 @@ void WeaponUpdateState(PLAYER *pPlayer)
                 // marius
                 // gunslinger mode
                 //if (powerupCheck(pPlayer, kPwUpTwoGuns) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)) && !VanillaMode()) // if we now have enough ammo to carry two shotguns, update the gun state and give back our second shotgun
-                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)) && !VanillaMode()) // if we now have enough ammo to carry two shotguns, update the gun state and give back our second shotgun
+                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || IsDualWielding(pPlayer, kWeaponShotgun)) && (gInfiniteAmmo || CheckAmmo(pPlayer, 2, 4)) && !VanillaMode()) // if we now have enough ammo to carry two shotguns, update the gun state and give back our second shotgun
                 // end marius
                     pPlayer->weaponState = 7;
                 else if (gInfiniteAmmo || pPlayer->ammoCount[2] > 1)
@@ -1034,7 +1050,7 @@ void WeaponUpdateState(PLAYER *pPlayer)
         }
         else // extrablood code
         {
-            if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (pPlayer->hasDoubleWeapon[kWeaponTommy] && pPlayer->isDualWielding[kWeaponTommy])) && checkAmmo2(pPlayer, 3, 2))
+            if ((powerupCheck(pPlayer, kPwUpTwoGuns) || IsDualWielding(pPlayer, kWeaponTommy)) && checkAmmo2(pPlayer, 3, 2))
             {
                 pPlayer->weaponQav = 70;
                 pPlayer->weaponState = 1;
@@ -1048,7 +1064,11 @@ void WeaponUpdateState(PLAYER *pPlayer)
         // end marius
         break;
     case kWeaponFlare:
-        if (powerupCheck(pPlayer, kPwUpTwoGuns))
+        // marius
+        // gunslinger mode
+        //if (powerupCheck(pPlayer, kPwUpTwoGuns))
+        if (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponFlare)))
+        // end marius
         {
             if (vb == 3 && checkAmmo2(pPlayer, 1, 2))
                 pPlayer->weaponQav = 46;
@@ -1071,7 +1091,11 @@ void WeaponUpdateState(PLAYER *pPlayer)
         switch (vb)
         {
         case 2:
-            if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+            // marius
+            // gunslinger mode
+            //if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+            if (checkAmmo2(pPlayer, 7, 10) && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla))))
+            // end marius
                 pPlayer->weaponQav = 83;
             else
                 pPlayer->weaponQav = 75;
@@ -1303,7 +1327,7 @@ void FireShotgun(int nTrigger, PLAYER *pPlayer)
     // marius
     // gunslinger mode
     //if (pPlayer == gMe && powerupCheck(pPlayer, kPwUpTwoGuns))
-    if (pPlayer == gMe && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && pPlayer->hasDoubleWeapon[kWeaponShotgun] && pPlayer->isDualWielding[kWeaponShotgun])))
+    if (pPlayer == gMe && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponShotgun))))
     // end marius
         ctrlJoystickRumble(n>>2);
 }
@@ -1351,7 +1375,7 @@ void FireTommy(int nTrigger, PLAYER *pPlayer)
     // marius
     // gunslinger mode
     //if (pPlayer == gMe && powerupCheck(pPlayer, kPwUpTwoGuns))
-    if (pPlayer == gMe && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && pPlayer->hasDoubleWeapon[kWeaponTommy] && pPlayer->isDualWielding[kWeaponTommy])))
+    if (pPlayer == gMe && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTommy))))
     // end marius
         ctrlJoystickRumble(nTrigger<<3);
 }
@@ -1419,7 +1443,7 @@ void AltFireSpread2(int nTrigger, PLAYER *pPlayer)
     // marius
     // gunslinger mode
     //if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 3, 2))
-    if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && pPlayer->hasDoubleWeapon[kWeaponTommy] && pPlayer->isDualWielding[kWeaponTommy])) && checkAmmo2(pPlayer, 3, 2))
+    if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTommy))) && checkAmmo2(pPlayer, 3, 2))
     // end marius
     {
         int r1, r2, r3;
@@ -1464,8 +1488,8 @@ void AltFireSpread2(int nTrigger, PLAYER *pPlayer)
     // marius
     // gunslinger mode
     //if (pPlayer == gMe && powerupCheck(pPlayer, kPwUpTwoGuns))
-    if (pPlayer == gMe && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && pPlayer->hasDoubleWeapon[kWeaponTommy] && pPlayer->isDualWielding[kWeaponTommy])))
-    // end
+    if (pPlayer == gMe && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTommy))))
+    // end marius
         ctrlJoystickRumble(nTrigger<<3);
 }
 
@@ -2075,7 +2099,11 @@ char processTesla(PLAYER *pPlayer)
     {
     case 4:
         pPlayer->weaponState = 5;
-        if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+        // marius
+        // gunslinger mode
+        //if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+        if (checkAmmo2(pPlayer, 7, 10) && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla))))
+        // end marius
             StartQAV(pPlayer, 84, nClientFireTesla, 1);
         else
             StartQAV(pPlayer, 77, nClientFireTesla, 1);
@@ -2084,7 +2112,11 @@ char processTesla(PLAYER *pPlayer)
         if (!pPlayer->input.buttonFlags.shoot)
         {
             pPlayer->weaponState = 2;
-            if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+            // marius
+            // gunslinger mode
+            //if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+            if (checkAmmo2(pPlayer, 7, 10) && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla))))
+            // end marius
                 StartQAV(pPlayer, 87, -1, 0);
             else
                 StartQAV(pPlayer, 80, -1, 0);
@@ -2093,7 +2125,11 @@ char processTesla(PLAYER *pPlayer)
         break;
     case 7:
         pPlayer->weaponState = 2;
-        if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+        // marius
+        // gunslinger mode
+        //if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+        if (checkAmmo2(pPlayer, 7, 10) && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla))))
+        // end marius
             StartQAV(pPlayer, 87, -1, 0);
         else
             StartQAV(pPlayer, 80, -1, 0);
@@ -2496,7 +2532,7 @@ void WeaponProcess(PLAYER *pPlayer) {
             }   
             else // extrablood code
             {
-                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (pPlayer->hasDoubleWeapon[kWeaponTommy] && pPlayer->isDualWielding[kWeaponTommy])) && checkAmmo2(pPlayer, 3, 2))
+                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || IsDualWielding(pPlayer, kWeaponTommy)) && checkAmmo2(pPlayer, 3, 2))
                     StartQAV(pPlayer, 71, nClientFireTommy, 1);
                 else
                     StartQAV(pPlayer, 66, nClientFireTommy, 1);                 
@@ -2504,7 +2540,11 @@ void WeaponProcess(PLAYER *pPlayer) {
             // end marius
             return;
         case kWeaponFlare:
-            if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 1, 2))
+            // marius
+            // gunslinger modde
+            //if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 1, 2))
+            if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponFlare))) && checkAmmo2(pPlayer, 1, 2))
+            // end marius
                 StartQAV(pPlayer, 48, nClientFireFlare, 0);
             else
                 StartQAV(pPlayer, 43, nClientFireFlare, 0);
@@ -2528,13 +2568,21 @@ void WeaponProcess(PLAYER *pPlayer) {
             {
             case 2:
                 pPlayer->weaponState = 4;
-                if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+                // marius
+                // gunslinger mode
+                //if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+                if (checkAmmo2(pPlayer, 7, 10) && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla))))
+                // end marius
                     StartQAV(pPlayer, 84, nClientFireTesla, 0);
                 else
                     StartQAV(pPlayer, 77, nClientFireTesla, 0);
                 return;
             case 5:
-                if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+                // marius
+                // gunslinger mode
+                //if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+                if (checkAmmo2(pPlayer, 7, 10) && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla))))
+                // end marius
                     StartQAV(pPlayer, 84, nClientFireTesla, 0);
                 else
                     StartQAV(pPlayer, 77, nClientFireTesla, 0);
@@ -2650,7 +2698,7 @@ void WeaponProcess(PLAYER *pPlayer) {
             }   
             else // extrablood code
             {
-                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (pPlayer->hasDoubleWeapon[kWeaponTommy] && pPlayer->isDualWielding[kWeaponTommy])) && checkAmmo2(pPlayer, 3, 2))
+                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || IsDualWielding(pPlayer, kWeaponTommy)) && checkAmmo2(pPlayer, 3, 2))
                     StartQAV(pPlayer, 73, nClientAltFireSpread2, 0);
                 else
                     StartQAV(pPlayer, 67, nClientAltFireSpread2, 0);              
@@ -2672,14 +2720,22 @@ void WeaponProcess(PLAYER *pPlayer) {
         case kWeaponTesla:
             if (checkAmmo2(pPlayer, 7, 35))
             {
-                if (checkAmmo2(pPlayer, 7, 70) && powerupCheck(pPlayer, kPwUpTwoGuns))
+                // marius
+                // gunslinger mode
+                //if (checkAmmo2(pPlayer, 7, 70) && powerupCheck(pPlayer, kPwUpTwoGuns))
+                if (checkAmmo2(pPlayer, 7, 70) && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla))))
+                // end marius
                     StartQAV(pPlayer, 85, nClientFireTesla, 0);
                 else
                     StartQAV(pPlayer, 78, nClientFireTesla, 0);
             }
             else
             {
-                if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+                // marius
+                // gunslinger mode                
+                //if (checkAmmo2(pPlayer, 7, 10) && powerupCheck(pPlayer, kPwUpTwoGuns))
+                if (checkAmmo2(pPlayer, 7, 10) && (powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponTesla))))
+                // end marius
                     StartQAV(pPlayer, 84, nClientFireTesla, 0);
                 else
                     StartQAV(pPlayer, 77, nClientFireTesla, 0);
@@ -2696,14 +2752,22 @@ void WeaponProcess(PLAYER *pPlayer) {
         case kWeaponFlare:
             if (CheckAmmo(pPlayer, 1, 8))
             {
-                if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 1, 16))
+                // marius
+                // gunslinger mode
+                //if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 1, 16))
+                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponFlare))) && checkAmmo2(pPlayer, 1, 16))
+                // end marius
                     StartQAV(pPlayer, 48, nClientAltFireFlare, 0);
                 else
                     StartQAV(pPlayer, 43, nClientAltFireFlare, 0);
             }
             else
             {
-                if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 1, 2))
+                // marius
+                // gunslinger mode                
+                //if (powerupCheck(pPlayer, kPwUpTwoGuns) && checkAmmo2(pPlayer, 1, 2))
+                if ((powerupCheck(pPlayer, kPwUpTwoGuns) || (!VanillaMode() && IsDualWielding(pPlayer, kWeaponFlare))) && checkAmmo2(pPlayer, 1, 2))
+                // end marius
                     StartQAV(pPlayer, 48, nClientFireFlare, 0);
                 else
                     StartQAV(pPlayer, 43, nClientFireFlare, 0);

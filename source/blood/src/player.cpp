@@ -1020,7 +1020,7 @@ void playerReset(PLAYER *pPlayer)
         for (int i = 0; i < kWeaponMax; i++)
         {
             pPlayer->hasDoubleWeapon[i] = 0;
-            pPlayer->isDualWielding[i] = 0;
+            pPlayer->hasDualWieldToggled[i] = 0;
         }
     }
     // end marius
@@ -1345,7 +1345,7 @@ char PickupAmmo(PLAYER* pPlayer, spritetype* pAmmo) {
     {
         switch (pPlayer->curWeapon) {
         case kWeaponShotgun:
-            if (pPlayer->isDualWielding[pPlayer->curWeapon])
+            if (pPlayer->hasDualWieldToggled[pPlayer->curWeapon])
             {
                 if (pPlayer->ammoCount[nAmmoType] >= 4 && nPrevAmmoCount < 4 && nAmmoType == 2)
                 {
@@ -1372,7 +1372,7 @@ char PickupWeapon(PLAYER *pPlayer, spritetype *pWeapon) {
     if (!VanillaMode() && !pPlayer->hasDoubleWeapon[nWeaponType] && pPlayer->hasWeapon[nWeaponType])
     {
         pPlayer->hasDoubleWeapon[nWeaponType] = 1;
-        pPlayer->isDualWielding[nWeaponType] = 1;
+        pPlayer->hasDualWieldToggled[nWeaponType] = 1;
         if (pPlayer->curWeapon == nWeaponType)
         {
             pPlayer->input.newWeapon = pPlayer->curWeapon;
@@ -1416,7 +1416,7 @@ char PickupWeapon(PLAYER *pPlayer, spritetype *pWeapon) {
     {
         switch (pPlayer->curWeapon) {
         case kWeaponShotgun:
-            if (pPlayer->isDualWielding[pPlayer->curWeapon])
+            if (pPlayer->hasDualWieldToggled[pPlayer->curWeapon])
             {
                 if (pPlayer->ammoCount[nAmmoType] >= 4 && nPrevAmmoCount < 4 && nAmmoType == 2)
                 {
@@ -1537,6 +1537,17 @@ void CheckPickUp(PLAYER *pPlayer)
             PickUp(pPlayer, pItem);
     }
 }
+
+// marius
+// gunslinger mode
+bool IsDualWielding(PLAYER *pPlayer, int nWeapon)
+{
+    if ((pPlayer->hasDoubleWeapon[nWeapon] && pPlayer->hasDualWieldToggled[nWeapon]))
+        return 1;
+    else
+        return 0;
+}
+// end marius
 
 int ActionScan(PLAYER *pPlayer, int *a2, int *a3)
 {
@@ -2025,14 +2036,16 @@ void ProcessInput(PLAYER *pPlayer)
         {
         case kWeaponShotgun:
         case kWeaponTommy:
+        case kWeaponFlare:
+        case kWeaponTesla:
             int nWeaponType = pPlayer->curWeapon;
-            if (pPlayer->isDualWielding[nWeaponType])
+            if (pPlayer->hasDualWieldToggled[nWeaponType])
             {
-                pPlayer->isDualWielding[nWeaponType] = 0;
+                pPlayer->hasDualWieldToggled[nWeaponType] = 0;
             }
             else
             {
-                pPlayer->isDualWielding[nWeaponType] = 1;
+                pPlayer->hasDualWieldToggled[nWeaponType] = 1;
                 if (Chance(0x4000))
                     sfxPlay3DSound(pPlayer->pSprite, 3038, -1, 0);
             }

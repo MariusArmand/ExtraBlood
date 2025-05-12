@@ -179,7 +179,7 @@ struct PLAYER
     int                 weaponAmmo;  //rename
     bool                hasWeapon[kWeaponMax];
     bool                hasDoubleWeapon[kWeaponMax]; // marius, gunslinger mode
-    bool                isDualWielding[kWeaponMax]; // marius, gunslinger mode
+    bool                hasDualWieldToggled[kWeaponMax]; // marius, gunslinger mode
     int                 weaponMode[kWeaponMax];
     int                 weaponOrder[2][kWeaponMax];
     //int               at149[14];
@@ -344,6 +344,7 @@ char        PickupAmmo(PLAYER *pPlayer, spritetype *pAmmo);
 char        PickupWeapon(PLAYER *pPlayer, spritetype *pWeapon);
 void        PickUp(PLAYER *pPlayer, spritetype *pSprite);
 void        CheckPickUp(PLAYER *pPlayer);
+bool        IsDualWielding(PLAYER *pPlayer, int nWeapon); // marius, gunslinger mode
 int         ActionScan(PLAYER *pPlayer, int *a2, int *a3);
 void        ProcessInput(PLAYER *pPlayer);
 void        playerProcess(PLAYER *pPlayer);

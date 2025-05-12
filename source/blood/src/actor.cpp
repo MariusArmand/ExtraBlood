@@ -3111,6 +3111,62 @@ void actKillDude(int nKillerSprite, spritetype *pSprite, DAMAGE_TYPE damageType,
             // end marius
         }
         break;
+        // marius
+        // gunslinger mode
+        case kDudeCultistTNT: {
+            if (!VanillaMode()) // extrablood code
+            {                
+                int nRand = Random(100);
+                if (IsPlayerSprite(pKillerSprite)) 
+                {
+                    PLAYER *pPlayer = &gPlayer[pKillerSprite->type - kDudePlayer1];
+                    if (!pPlayer->hasDoubleWeapon[kWeaponFlare])
+                    {
+                        // as long as we don't have double flarepistols increase the chance to drop a flarepistol
+                        if (nRand <= 50) actDropObject(pSprite, kItemWeaponFlarePistol);
+                        else if (nRand <= 70) actDropObject(pSprite, kItemAmmoFlares);
+                    }
+                    else
+                    {
+                        if (nRand <= 10) actDropObject(pSprite, kItemWeaponFlarePistol);
+                        else if (nRand <= 50) actDropObject(pSprite, kItemAmmoFlares);
+                    }
+                }
+                else
+                {
+                    if (nRand <= 10) actDropObject(pSprite, kItemWeaponFlarePistol);
+                    else if (nRand <= 50) actDropObject(pSprite, kItemAmmoFlares);
+                }
+            }
+        }
+        break;
+        case kDudeCultistTesla: {
+            if (!VanillaMode()) // extrablood code
+            {                
+                int nRand = Random(100);
+                if (IsPlayerSprite(pKillerSprite)) 
+                {
+                    PLAYER *pPlayer = &gPlayer[pKillerSprite->type - kDudePlayer1];
+                    if (!pPlayer->hasDoubleWeapon[kWeaponTesla])
+                    {
+                        // as long as we don't have double teslacannons increase the chance to drop a teslacannon
+                        if (nRand <= 50) actDropObject(pSprite, kItemWeaponTeslaCannon);
+                        else if (nRand <= 70) actDropObject(pSprite, kItemAmmoTeslaCharge);
+                    }
+                    else
+                    {
+                        if (nRand <= 10) actDropObject(pSprite, kItemWeaponTeslaCannon);
+                        else if (nRand <= 50) actDropObject(pSprite, kItemAmmoTeslaCharge);
+                    }
+                }
+                else
+                {
+                    if (nRand <= 10) actDropObject(pSprite, kItemWeaponTeslaCannon);
+                    else if (nRand <= 50) actDropObject(pSprite, kItemAmmoTeslaCharge);
+                }
+            }
+        }        
+        // end marius
     }
 
     int nSeq;
