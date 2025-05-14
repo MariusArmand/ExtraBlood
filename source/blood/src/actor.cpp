@@ -6573,7 +6573,20 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
             if (sector[nSector].ceilingstat&1)
                 nSurf = kSurfNone;
             else
-                nSurf = surfType[sector[nSector].ceilingpicnum];
+            // marius
+            // ceiling fx
+            {
+                if (VanillaMode()) // original code
+                {
+                    nSurf = surfType[sector[nSector].ceilingpicnum];
+                }
+                else // extrablood code
+                {
+                    nSurf = surfType[sector[nSector].ceilingpicnum];
+                    fxSpawnCeiling(FX_43, nSector, x, y, z); // spawn a decal on the ceiling
+                }
+            }
+            // end marius
             break;
         }
         case 2:

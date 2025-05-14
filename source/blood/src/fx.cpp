@@ -113,7 +113,8 @@ FXDATA gFXData[] = {
     { kCallbackFXPodBloodSplat, 2, 0, 3, 27962, 4096, 480, 4023, 32, 32, 0, -16, 0 },
     { kCallbackFXPodBloodSplat, 2, 0, 3, 27962, 4096, 480, 4028, 32, 32, 0, -16, 0 },
     { kCallbackNone, 2, 0, 0, 0, 0, 480, 926, 32, 32, 610, -12, 0 },
-    { kCallbackNone, 1, 70, 1, -13981, 5120, 0, 0, 0, 0, 0, 0, 0 }
+    { kCallbackNone, 1, 70, 1, -13981, 5120, 0, 0, 0, 0, 0, 0, 0 },
+    { kCallbackNone, 1, 0, 3, 0, 0, 0, 956, 32, 32, 80, 0, 0 }, // marius, ceiling fx, ceiling blood splat
 };
 
 void CFX::fxKill(int nSprite)
@@ -186,6 +187,7 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
             duration *= 10;
             break;
         case FX_36: // blood splat
+        case FX_57: // ceiling blood splat
             if (!duration)
                 duration = pFX->duration;
             duration *= 200;
@@ -282,7 +284,7 @@ void CFX::fxProcess(void)
             nAirDrag >>= 1; // make blood drag 
             if (!IsUnderwaterSector(pSprite->sectnum) && pSprite->type == FX_27)
             {
-                nGravity = 80000; // make blood heavier
+                nGravity = 55924; // make blood heavier
             }
             else if (pSprite->type == FX_27)
             {
@@ -346,6 +348,17 @@ void CFX::fxProcess(void)
             getzsofslope(nSector, pSprite->x, pSprite->y, &ceilZ, &floorZ);
             if (ceilZ > pSprite->z && !(sector[nSector].ceilingstat&1))
             {
+                // marius
+                // ceiling fx
+                if (!VanillaMode()) // extrablood code
+                {
+                    // spawn a blood splat on the ceiling where a bloodspurt hits the ceiling
+                    if (pFXData->funcID == kCallbackFXBloodBits)
+                    {
+                        fxSpawnCeiling(FX_57, nSector, pSprite->x, pSprite->y, ceilZ + 3, Random2(512));
+                    }
+                }
+                //end marius
                 fxFree(nSprite);
                 continue;
             }
@@ -374,6 +387,42 @@ void CFX::fxProcess(void)
         // end marius
     }
 }
+
+// marius
+// ceiling fx
+void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
+{
+    if (gLowerLink[nSector] < 0 || nFx == FX_43) // if not in a lower ror sector or bullet decal fx
+    {
+        spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z);
+        if (pFX)
+        {
+            pFX->ang = angle; // set initial angle to randomize look before applying slope
+
+            // set initial alignment before spriteSetSlope
+            pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | CSTAT_SPRITE_ONE_SIDED | 0x6000; // 0x6000 is move mask
+
+            // Apply ceiling slope                    
+            if (sector[nSector].ceilingstat&2) // if it's a sloped ceiling
+            { 
+                // Set ang based on slope direction
+                int32_t slopeAngle;
+                if (sector[nSector].ceilingheinum >= 0) // positive slope
+                { 
+                    slopeAngle = (GetWallAngle(sector[nSector].wallptr) + kAng180 + kAng90) & kAngMask;
+                } 
+                else // negative slope
+                {
+                    slopeAngle = (GetWallAngle(sector[nSector].wallptr) - kAng180 + kAng90) & kAngMask; 
+                }
+                pFX->ang = slopeAngle;
+
+                spriteSetSlope(pFX->index, sector[nSector].ceilingheinum);
+            }
+        }
+    }
+}
+// end marius
 
 void fxSpawnBlood(spritetype *pSprite, int a2)
 {
