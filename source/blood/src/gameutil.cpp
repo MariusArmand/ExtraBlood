@@ -949,4 +949,84 @@ void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int*
 	}
 }
 
+// NoOne, extrablood
+// ceiling fx
+// for floor/sloped sprites
+void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* x3, int* y3, int* x4, int* y4, char flags = 0x07)
+{
+	int t, i, cx, cy, xoff = 0, yoff = 0;
+	int nPic = pSpr->picnum, nAng = pSpr->ang & kAngMask;
+	int xrep = pSpr->xrepeat, wh = tilesiz[nPic].x;
+	int yrep = pSpr->yrepeat, hg = tilesiz[nPic].y;
+	int nCos = sintable[(nAng + kAng90) & kAngMask];
+	int nSin = sintable[nAng];
+	
+	*x1 = *x2 = *x3 = *x4 = pSpr->x;
+	*y1 = *y2 = *y3 = *y4 =  pSpr->y;
+	
+	if (flags & 0x01)
+	{
+		xoff = picanm[nPic].xofs;
+		yoff = picanm[nPic].yofs;
+	}
+	
+	if ((flags & 0x02) && (pSpr->cstat & CSTAT_SPRITE_ALIGNMENT_MASK) != CSTAT_SPRITE_ALIGNMENT_SLOPE)
+	{
+		xoff += pSpr->xoffset;
+		yoff += pSpr->yoffset;
+	}
+	
+	if (pSpr->cstat & CSTAT_SPRITE_XFLIP)
+		xoff = -xoff;
+	
+	if (pSpr->cstat & CSTAT_SPRITE_YFLIP)
+		yoff = -yoff;
+	
+	if (!(flags & 0x04))
+	{
+		if (wh % 2) wh++;
+		if (hg % 2) hg++;
+	}
+	
+	cx = ((wh>>1)+xoff)*xrep;
+	cy = ((hg>>1)+yoff)*yrep;
+		
+	*x1 += dmulscale16(nSin, cx, nCos, cy);
+	*y1 += dmulscale16(nSin, cy, -nCos, cx);
+	
+	t = wh*xrep;
+	*x2 = *x1 - mulscale16(nSin, t);
+	*y2 = *y1 + mulscale16(nCos, t);
+	
+	t = hg*yrep;
+	i = -mulscale16(nCos, t);	*x3 = *x2 + i; *x4 = *x1 + i;
+	i = -mulscale16(nSin, t);	*y3 = *y2 + i; *y4 = *y1 + i;
+}
 
+// test if sprite extents is inside sector
+bool SprInside(spritetype* pSpr, int nSect)
+{
+    int x[4], y[4];
+    int numedges = 1;
+    
+    x[0] = pSpr->x, y[0] = pSpr->y; // can at least test middle point
+    switch(pSpr->cstat & CSTAT_SPRITE_ALIGNMENT)
+    {
+        case CSTAT_SPRITE_ALIGNMENT_FLOOR:
+        case CSTAT_SPRITE_ALIGNMENT_SLOPE:
+            GetSpriteExtents(pSpr, &x[0], &y[0], &x[1], &y[1], &x[2], &y[2], &x[3], &y[3], 0x07);
+            numedges = 4;
+            break;
+        case CSTAT_SPRITE_ALIGNMENT_WALL:
+        case CSTAT_SPRITE_ALIGNMENT_FACING:
+            // this is still useful if you spawn FX on the wall?
+            // not sure, just remove it if not.
+            GetSpriteExtents(pSpr, &x[0], &y[0], &x[1], &y[1], NULL, NULL, 0x07);
+            numedges = 2;
+            break;
+    }
+    
+    while(--numedges >= 0 && inside(x[numedges], y[numedges], nSect));
+    return (numedges < 0);
+}
+// End NoOne, extrablood

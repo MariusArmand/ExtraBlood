@@ -400,7 +400,7 @@ void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
             pFX->ang = angle; // set initial angle to randomize look before applying slope
 
             // set initial alignment before spriteSetSlope
-            pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | CSTAT_SPRITE_ONE_SIDED | 0x6000; // 0x6000 is move mask
+            pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | CSTAT_SPRITE_ONE_SIDED | CSTAT_SPRITE_YFLIP | 0x4000; // 0x4000 is ceiling move mask
 
             // Apply ceiling slope                    
             if (sector[nSector].ceilingstat&2) // if it's a sloped ceiling
@@ -418,6 +418,12 @@ void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
                 pFX->ang = slopeAngle;
 
                 spriteSetSlope(pFX->index, sector[nSector].ceilingheinum);
+            }
+
+            // delete fx when it's edging out of the sector
+            if (!SprInside(pFX, nSector))
+            {
+                gFX.fxKill(pFX->index);
             }
         }
     }
