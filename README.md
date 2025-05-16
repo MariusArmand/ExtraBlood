@@ -12,8 +12,12 @@ Fork of the Reverse-engineered port of the Build game Blood [[NBlood](https://gi
 #### Misc
 - Configurable keyboard key to Quick Restart the current level
 
+***
+
 ### To Do
 - Floor decals
+
+***
 
 ### Installing
 1. Extract ExtraBlood to a new directory
