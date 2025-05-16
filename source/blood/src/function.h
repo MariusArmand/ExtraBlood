@@ -36,11 +36,11 @@ extern "C" {
 #endif
 
 // marius
-// gunslinger mode
+// gunslinger mode, quick restart
 //#define NUMGAMEFUNCTIONS 58
 //#define MAXGAMEFUNCLEN 32
-#define NUMGAMEFUNCTIONS 59
-#define MAXGAMEFUNCLEN 33
+#define NUMGAMEFUNCTIONS 60
+#define MAXGAMEFUNCLEN 34
 // end marius
 
 extern char gamefunctions[NUMGAMEFUNCTIONS][MAXGAMEFUNCLEN];
@@ -108,6 +108,7 @@ enum GameFunction_t
    gamefunc_Show_Console,
    gamefunc_Quick_Save,
    gamefunc_Quick_Load,
+   gamefunc_Quick_Restart, // marius, quick restart
    };
 #ifdef __cplusplus
 }

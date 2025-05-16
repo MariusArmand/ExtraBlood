@@ -98,6 +98,7 @@ char gamefunctions[NUMGAMEFUNCTIONS][MAXGAMEFUNCLEN] =
    "Show_Console",
    "Quick_Save",
    "Quick_Load",
+   "Quick_Restart", // marius, quick restart
    };
 
 #ifdef __SETUP__
@@ -163,6 +164,7 @@ const char keydefaults[NUMGAMEFUNCTIONS*2][MAXGAMEFUNCLEN] =
    "`", "",
    "F6", "",
    "F9", "",
+   "*","", // marius, quick restart
    };
 
 const char oldkeydefaults[NUMGAMEFUNCTIONS*2][MAXGAMEFUNCLEN] =
@@ -226,6 +228,7 @@ const char oldkeydefaults[NUMGAMEFUNCTIONS*2][MAXGAMEFUNCLEN] =
    "`", "",
    "F6", "",
    "F9", "",
+   "*","", // marius, quick restart
    };
 
 static const char * mousedefaults[MAXMOUSEBUTTONS] =

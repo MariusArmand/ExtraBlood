@@ -2027,32 +2027,36 @@ void ProcessInput(PLAYER *pPlayer)
             viewSetMessage("Holstering weapon");
         }
     }
+
     // marius
-    // gunslinger mode
-    if (!VanillaMode() && pInput->keyFlags.dualWield)
+    if (!VanillaMode())
     {
-        pInput->keyFlags.dualWield = 0;
-        switch (pPlayer->curWeapon)
+        // gunslinger mode
+        if (pInput->keyFlags.dualWield)
         {
-        case kWeaponShotgun:
-        case kWeaponTommy:
-        case kWeaponFlare:
-        case kWeaponTesla:
-            int nWeaponType = pPlayer->curWeapon;
-            if (pPlayer->hasDualWieldToggled[nWeaponType])
+            pInput->keyFlags.dualWield = 0;
+            switch (pPlayer->curWeapon)
             {
-                pPlayer->hasDualWieldToggled[nWeaponType] = 0;
-            }
-            else
-            {
-                pPlayer->hasDualWieldToggled[nWeaponType] = 1;
-                if (Chance(0x4000))
-                    sfxPlay3DSound(pPlayer->pSprite, 3038, -1, 0);
-            }
-            pPlayer->input.newWeapon = pPlayer->curWeapon;
-            WeaponRaise(pPlayer);
-            break;
-        }     
+            case kWeaponShotgun:
+            case kWeaponTommy:
+            case kWeaponFlare:
+            case kWeaponTesla:
+                int nWeaponType = pPlayer->curWeapon;
+                if (pPlayer->hasDualWieldToggled[nWeaponType])
+                {
+                    pPlayer->hasDualWieldToggled[nWeaponType] = 0;
+                }
+                else
+                {
+                    pPlayer->hasDualWieldToggled[nWeaponType] = 1;
+                    if (Chance(0x4000))
+                        sfxPlay3DSound(pPlayer->pSprite, 3038, -1, 0);
+                }
+                pPlayer->input.newWeapon = pPlayer->curWeapon;
+                WeaponRaise(pPlayer);
+                break;
+            }     
+        }
     }
     // end marius
     CheckPickUp(pPlayer);

@@ -558,7 +558,9 @@ void CDemo::FlushInput(int nCount)
         bitWriter.writeBit(pInput->keyFlags.holsterWeapon);
         // marius
         if (!VanillaMode()) // extrablood code
-            bitWriter.writeBit(pInput->keyFlags.dualWield); // marius, gunslinger mode
+        {
+            bitWriter.writeBit(pInput->keyFlags.dualWield); // gunslinger mode
+        }
         // end marius
         bitWriter.writeBit(pInput->keyFlags.lookCenter);
         bitWriter.writeBit(pInput->keyFlags.lookLeft);
@@ -615,8 +617,10 @@ void CDemo::ReadInput(int nCount)
             pInput->keyFlags.nextWeapon = bitReader.readBit();
             pInput->keyFlags.holsterWeapon = bitReader.readBit();
             // marius
-            if (!VanillaMode()) // extrablood code
-                pInput->keyFlags.dualWield = bitReader.readBit(); // marius, gunslinger mode
+            if (!VanillaMode()) // extrablood 
+            {
+                pInput->keyFlags.dualWield = bitReader.readBit(); // gunslinger
+            }
             // end marius
             pInput->keyFlags.lookCenter = bitReader.readBit();
             pInput->keyFlags.lookLeft = bitReader.readBit();
@@ -670,7 +674,9 @@ void CDemo::ReadInput(int nCount)
             pInput->keyFlags.holsterWeapon = bitReader.readBit();
             // marius
             if (!VanillaMode()) // extrablood code
-                pInput->keyFlags.dualWield = bitReader.readBit(); // marius, gunslinger mode
+            {
+                pInput->keyFlags.dualWield = bitReader.readBit(); // gunslinger mode
+            }
             // end marius
             pInput->keyFlags.lookCenter = bitReader.readBit();
             pInput->keyFlags.lookLeft = bitReader.readBit();

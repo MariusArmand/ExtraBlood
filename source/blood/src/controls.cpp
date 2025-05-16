@@ -438,6 +438,13 @@ void ctrlGetInput(void)
         CONTROL_ClearButton(gamefunc_Dual_Wield);
         gInput.keyFlags.dualWield = 1;
     }
+
+    // quick restart
+    if (BUTTON(gamefunc_Quick_Restart))
+    {
+        CONTROL_ClearButton(gamefunc_Quick_Restart);
+        gInput.keyFlags.restart = 1;        
+    }
     // end marius
 
     int const run = gRunKeyMode ? (BUTTON(gamefunc_Run) | gAutoRun) : (BUTTON(gamefunc_Run) ^ gAutoRun);
