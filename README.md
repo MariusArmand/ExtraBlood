@@ -2,9 +2,18 @@
 Fork of the Reverse-engineered port of the Build game Blood [[NBlood](https://github.com/NBlood/NBlood)] using EDuke32 engine technology and development principles.
 
 ### Distinctive features
+#### Gore
 - More and longer lasting gore
-- Dual wield shotguns or tommyguns (toggled by configurable keyboard key)
+- Decals and blood fx on the ceiling
+#### Dual wielding
+- Dual wield flarepistols, shotguns, tommyguns and teslacannons (toggled by configurable keyboard key)
+- Cultists have an increased chance to drop their weapons to accommodate the dual wield mechanic (Green cultists drop flarepistols and flares)
 - Akimbo power-up is replaced by Super Armor
+#### Misc
+- Configurable keyboard key to Quick Restart the current level
+
+### To Do
+- Floor decals
 
 ### Installing
 1. Extract ExtraBlood to a new directory
