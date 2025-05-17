@@ -83,7 +83,6 @@ enum FX_ID {
     FX_54,
     FX_55,
     FX_56,
-    FX_57, // marius, ceiling fx, blood splat
     kFXMax
 };
 
@@ -96,6 +95,7 @@ public:
 };
 
 void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle = 0); // marius, ceiling fx
+void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle = 0); // marius, floor fx
 void fxSpawnBlood(spritetype *pSprite, int a2);
 void fxSpawnPodBlood(spritetype *pSprite, int a2);
 void fxSpawnEjectingBrass(spritetype *pSprite, int z, int a3, int a4);

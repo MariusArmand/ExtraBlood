@@ -114,7 +114,6 @@ FXDATA gFXData[] = {
     { kCallbackFXPodBloodSplat, 2, 0, 3, 27962, 4096, 480, 4028, 32, 32, 0, -16, 0 },
     { kCallbackNone, 2, 0, 0, 0, 0, 480, 926, 32, 32, 610, -12, 0 },
     { kCallbackNone, 1, 70, 1, -13981, 5120, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // marius, ceiling fx, ceiling blood splat
 };
 
 void CFX::fxKill(int nSprite)
@@ -187,7 +186,6 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
             duration *= 10;
             break;
         case FX_36: // blood splat
-        case FX_57: // ceiling blood splat
             if (!duration)
                 duration = pFX->duration;
             duration *= 200;
@@ -351,7 +349,7 @@ void CFX::fxProcess(void)
                     // spawn a blood splat on the ceiling where a bloodspurt hits the ceiling
                     if (pFXData->funcID == kCallbackFXBloodBits)
                     {
-                        fxSpawnCeiling(FX_57, nSector, pSprite->x, pSprite->y, ceilZ + 3, Random2(512));
+                        fxSpawnCeiling(FX_36, nSector, pSprite->x, pSprite->y, ceilZ + 3, Random2(512));
                     }
                 }
                 //end marius
@@ -388,39 +386,89 @@ void CFX::fxProcess(void)
 // ceiling fx
 void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
 {
-    if (gLowerLink[nSector] < 0 || nFx == FX_43) // if not in a lower ror sector or bullet decal fx
+    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z);
+    if (pFX)
     {
-        spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z);
-        if (pFX)
-        {
-            pFX->ang = angle; // set initial angle to randomize look before applying slope
+        pFX->ang = angle;
 
-            // set initial alignment before spriteSetSlope
-            pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | CSTAT_SPRITE_ONE_SIDED | CSTAT_SPRITE_YFLIP | 0x4000; // 0x4000 is ceiling move mask
+        // set initial alignment before spriteSetSlope
+        pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | 0x4000; // 0x4000 is ceiling move mask
 
-            // Apply ceiling slope                    
-            if (sector[nSector].ceilingstat&2) // if it's a sloped ceiling
+        // apply ceiling slope                    
+        if (sector[nSector].ceilingstat&2) // if it's a sloped ceiling
+        { 
+            // set ang based on slope direction
+            int32_t slopeAngle;
+            if (sector[nSector].ceilingheinum >= 0) // positive slope
             { 
-                // Set ang based on slope direction
-                int32_t slopeAngle;
-                if (sector[nSector].ceilingheinum >= 0) // positive slope
-                { 
-                    slopeAngle = (GetWallAngle(sector[nSector].wallptr) + kAng180 + kAng90) & kAngMask;
-                } 
-                else // negative slope
-                {
-                    slopeAngle = (GetWallAngle(sector[nSector].wallptr) - kAng180 + kAng90) & kAngMask; 
-                }
-                pFX->ang = slopeAngle;
-
-                spriteSetSlope(pFX->index, sector[nSector].ceilingheinum);
-            }
-
-            // delete fx when it's edging out of the sector
-            if (!SprInside(pFX, nSector))
+                slopeAngle = (GetWallAngle(sector[nSector].wallptr) + kAng180 + kAng90) & kAngMask;
+            } 
+            else // negative slope
             {
-                gFX.fxKill(pFX->index);
+                slopeAngle = (GetWallAngle(sector[nSector].wallptr) - kAng180 + kAng90) & kAngMask; 
             }
+            pFX->ang = slopeAngle;
+
+            spriteSetSlope(pFX->index, sector[nSector].ceilingheinum);
+        }
+
+        // chance to flip to randomize look
+        if (Chance(0X8000))
+        {
+            pFX->cstat |= CSTAT_SPRITE_YFLIP;
+        }
+
+        // delete fx when it is:
+        // - edging out of the sector
+        // - in a lower ror sector
+        if (!SprInside(pFX, nSector) || gLowerLink[nSector] > -1) 
+        {
+            gFX.fxKill(pFX->index);
+        }
+    }
+}
+
+// floor fx
+void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle)
+{
+    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z);
+    if (pFX)
+    {
+        pFX->ang = angle;
+
+        // set initial alignment before spriteSetSlope
+        pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | 0x2000; // 0x2000 is floor move mask
+
+        // apply floor slope                    
+        if (sector[nSector].floorstat&2) // if it's a sloped floor
+        { 
+            // set ang based on slope direction
+            int32_t slopeAngle;
+            if (sector[nSector].floorheinum >= 0) // positive slope
+            { 
+                slopeAngle = (GetWallAngle(sector[nSector].wallptr) + kAng180 + kAng90) & kAngMask;
+            } 
+            else // negative slope
+            {
+                slopeAngle = (GetWallAngle(sector[nSector].wallptr) - kAng180 + kAng90) & kAngMask; 
+            }
+            pFX->ang = slopeAngle;
+
+            spriteSetSlope(pFX->index, sector[nSector].floorheinum);
+        }
+
+        // chance to flip to randomize look
+        if (Chance(0X8000))
+        {
+            pFX->cstat |= CSTAT_SPRITE_XFLIP;
+        }
+
+        // delete fx when it is:
+        // - edging out of the sector
+        // - is in an upper ror sector
+        if (!SprInside(pFX, nSector) || gUpperLink[nSector] > -1) 
+        {
+            gFX.fxKill(pFX->index);
         }
     }
 }

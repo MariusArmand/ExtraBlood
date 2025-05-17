@@ -421,12 +421,25 @@ void fxBloodBits(int nSprite) // 14
         dassert(nChannel < 32);
         sfxPlay3DSound(pSprite, 385, nChannel, nFlags);
     }
+    // marius
+    // floor fx
     if (Chance(0x5000))
     {
-        spritetype *pFX = gFX.fxSpawn(FX_36, pSprite->sectnum, x, y, floorZ-64);
-        if (pFX)
-            pFX->ang = nAngle;
+        if (VanillaMode()) // orginal code
+        {
+            spritetype *pFX = gFX.fxSpawn(FX_36, pSprite->sectnum, x, y, floorZ-64);
+            if (pFX)
+                pFX->ang = nAngle;
+
+        }
+        else // extrablood code
+        {
+            int32_t floorZ, ceilZ;
+            getzsofslope(pSprite->sectnum, x, y, &ceilZ, &floorZ);
+            fxSpawnFloor(FX_36, pSprite->sectnum, x, y, floorZ, Random2(512)); // spawn a decal on the floor
+        }
     }
+    // end marius
     gFX.fxFree(nSprite);
 }
 
