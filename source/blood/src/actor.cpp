@@ -2824,7 +2824,12 @@ spritetype *actSpawnFloor(spritetype *pSprite)
 spritetype *actDropAmmo(spritetype *pSprite, int nType)
 {
     spritetype *pSprite2 = NULL;
-    if (pSprite && pSprite->statnum < kMaxStatus && nType >= kItemAmmoBase && nType < kItemAmmoMax)
+    // marius
+    // floor fx
+    //if (pSprite && pSprite->statnum < kMaxStatus && nType >= kItemAmmoBase && nType < kItemAmmoMax)
+    if (pSprite && pSprite->statnum < kMaxStatus && nType >= kItemAmmoBase && nType < kItemAmmoMax
+        && (VanillaMode() || !IsFloorPanning(pSprite->sectnum)))
+    // end marius
     {
         pSprite2 = actSpawnFloor(pSprite);
         AMMOITEMDATA *pAmmo = &gAmmoItemData[nType - kItemAmmoBase];
@@ -2840,7 +2845,12 @@ spritetype *actDropAmmo(spritetype *pSprite, int nType)
 spritetype *actDropWeapon(spritetype *pSprite, int nType)
 {
     spritetype *pSprite2 = NULL;
-    if (pSprite && pSprite->statnum < kMaxStatus && nType >= kItemWeaponBase && nType < kItemWeaponMax)
+    // marius
+    // floor fx    
+    //if (pSprite && pSprite->statnum < kMaxStatus && nType >= kItemWeaponBase && nType < kItemWeaponMax)
+    if (pSprite && pSprite->statnum < kMaxStatus && nType >= kItemWeaponBase && nType < kItemWeaponMax
+        && (VanillaMode() || !IsFloorPanning(pSprite->sectnum)))
+    // end marius        
     {
         pSprite2 = actSpawnFloor(pSprite);
         WEAPONITEMDATA *pWeapon = &gWeaponItemData[nType - kItemWeaponBase];
@@ -2856,7 +2866,12 @@ spritetype *actDropWeapon(spritetype *pSprite, int nType)
 spritetype *actDropItem(spritetype *pSprite, int nType)
 {
     spritetype *pSprite2 = NULL;
-    if (pSprite && pSprite->statnum < kMaxStatus && nType >= kItemBase && nType < kItemMax)
+    // marius
+    // floor fx    
+    //if (pSprite && pSprite->statnum < kMaxStatus && nType >= kItemBase && nType < kItemMax)
+    if (pSprite && pSprite->statnum < kMaxStatus && nType >= kItemBase && nType < kItemMax
+        && (VanillaMode() || (!IsFloorPanning(pSprite->sectnum) && nType == kItemHealthLifeEssense)))
+    // end marius        
     {
         pSprite2 = actSpawnFloor(pSprite);
         ITEMDATA *pItem = &gItemData[nType - kItemBase];

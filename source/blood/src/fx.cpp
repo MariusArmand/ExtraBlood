@@ -466,7 +466,8 @@ void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         // delete fx when it is:
         // - edging out of the sector
         // - is in an upper ror sector
-        if (!SprInside(pFX, nSector) || gUpperLink[nSector] > -1) 
+        // - in a sector where floor is panning
+        if (!SprInside(pFX, nSector) || gUpperLink[nSector] > -1 || IsFloorPanning(nSector))
         {
             gFX.fxKill(pFX->index);
         }

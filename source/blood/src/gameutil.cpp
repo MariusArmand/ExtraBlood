@@ -1030,3 +1030,14 @@ bool SprInside(spritetype* pSpr, int nSect)
     return (numedges < 0);
 }
 // End NoOne, extrablood
+
+// marius
+// floor fx
+bool IsFloorPanning(int nSector)
+{
+    if (nSector < 0 || nSector >= numsectors || sector[nSector].extra <= 0)
+        return false;
+    XSECTOR* pXSector = &xsector[sector[nSector].extra];
+    return pXSector->panFloor != 0;
+}
+// end marius

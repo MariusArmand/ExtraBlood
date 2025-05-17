@@ -89,3 +89,4 @@ void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int*
 void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* x3, int* y3, int* x4, int* y4, char flags);
 bool SprInside(spritetype* pSpr, int nSect);
 // End NoOne, extrablood
+bool IsFloorPanning(int nSector); // marius, floor fx
