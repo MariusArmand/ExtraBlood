@@ -114,7 +114,7 @@ FXDATA gFXData[] = {
     { kCallbackFXPodBloodSplat, 2, 0, 3, 27962, 4096, 480, 4028, 32, 32, 0, -16, 0 },
     { kCallbackNone, 2, 0, 0, 0, 0, 480, 926, 32, 32, 610, -12, 0 },
     { kCallbackNone, 1, 70, 1, -13981, 5120, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackNone, 1, 0, 3, 0, 0, 0, 956, 32, 32, 80, 0, 0 }, // marius, ceiling fx, ceiling blood splat
+    { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // marius, ceiling fx, ceiling blood splat
 };
 
 void CFX::fxKill(int nSprite)
@@ -282,11 +282,7 @@ void CFX::fxProcess(void)
         if (!VanillaMode()) // extrablood code
         {
             nAirDrag >>= 1; // make blood drag 
-            if (!IsUnderwaterSector(pSprite->sectnum) && pSprite->type == FX_27)
-            {
-                nGravity = 55924; // make blood heavier
-            }
-            else if (pSprite->type == FX_27)
+            if (IsUnderwaterSector(pSprite->sectnum) && pSprite->type == FX_27)
             {
                 nGravity = 1250; // make blood lighter
             }
