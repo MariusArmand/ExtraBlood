@@ -952,7 +952,7 @@ void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int*
 // NoOne, extrablood
 // ceiling fx
 // for floor/sloped sprites
-void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* x3, int* y3, int* x4, int* y4, char flags = 0x07)
+void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* x3, int* y3, int* x4, int* y4, char flags)
 {
 	int t, i, cx, cy, xoff = 0, yoff = 0;
 	int nPic = pSpr->picnum, nAng = pSpr->ang & kAngMask;
@@ -1029,6 +1029,78 @@ bool SprInside(spritetype* pSpr, int nSect)
     while(--numedges >= 0 && inside(x[numedges], y[numedges], nSect));
     return (numedges < 0);
 }
+
+void OffsetPos(int oX, int oY, int oZ, int nAng, int* x, int* y, int* z)
+{
+    // left, right
+    if (oX)
+    {
+        if (x) *x -= mulscale30(oX, Cos(nAng + kAng90));
+        if (y) *y -= mulscale30(oX, Sin(nAng + kAng90));
+    }
+
+    // forward, backward
+    if (oY)
+    {
+        if (x) *x += mulscale30r(Cos(nAng), oY);
+        if (y) *y += mulscale30r(Sin(nAng), oY);
+    }
+
+    // top, bottom
+    if (oZ && z)
+        *z += oZ;
+
+}
+
+void DoWallCorrection(int nWall, int* x, int* y, int step)
+{
+    OffsetPos(0, step, 0, (GetWallAngle(nWall) + kAng90) & kAngMask, x, y, NULL);
+}
+
+char CanPutOnWall(spritetype* pSpr, int nWall, int wAng, int nMaxDang)
+{
+    hitdata_t hit; vec3_t pos;
+    int hAng = (wAng + kAng90 + kAng180) & kAngMask;
+    int wAngB, dAng, sx[2], sy[2], sz[2], zt, zb;
+    int nSect, i = 2;
+
+    GetSpriteExtents(pSpr, &sx[0], &sy[0], &sx[1], &sy[1], &sz[0], &sz[1]);
+
+    if ((nSect = wall[nWall].nextsector) >= 0)
+    {
+        getzsofslope(nSect, pSpr->x, pSpr->y, &zt, &zb);
+        
+        // top point above floor
+        if (sz[0] <= zb && sz[0] > zt)
+            return 0;
+
+        // bot point below ceil
+        if (sz[1] >= zt && sz[0] < zb)
+           return 0;
+    }
+
+    while (--i >= 0)
+    {
+        pos.x = sx[i];
+        pos.y = sy[i];
+        pos.z = pSpr->z;
+
+        hitscan(&pos, pSpr->sectnum, Cos(hAng) >> 16, Sin(hAng) >> 16, 0, &hit, CLIPMASK0);
+        if (hit.wall != nWall)
+        {
+            if (wall[nWall].point2 != hit.wall && lastwall(nWall) != hit.wall)
+                break; // wall is too short or sprite is too long
+            
+            wAngB = GetWallAngle(hit.wall);
+            dAng = klabs(DANGLE(wAngB, wAng));
+            if (dAng >= nMaxDang)
+                break; // angle is too sharp
+        }
+    }
+
+    return (i < 0);
+}
+
 // End NoOne, extrablood
 
 // marius

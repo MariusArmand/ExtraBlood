@@ -6554,6 +6554,7 @@ bool actCanSplatWall(int nWall)
     return 1;
 }
 
+
 void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6, VECTOR_TYPE vectorType)
 {
     int nShooter = pShooter->index;
@@ -6638,8 +6639,16 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
             nSurf = surfType[wall[nWall].picnum];
             if (actCanSplatWall(nWall))
             {
+#if 0
                 int x = gHitInfo.hitx-mulscale14(a4, 16);
                 int y = gHitInfo.hity-mulscale14(a5, 16);
+#else
+                // put it closer to the wall
+                int x = gHitInfo.hitx;
+                int y = gHitInfo.hity;
+                DoWallCorrection(nWall, &x, &y);
+
+#endif
                 int z = gHitInfo.hitz-mulscale14(a6, 256);
                 int nSurf = surfType[wall[nWall].picnum];
                 dassert(nSurf < kSurfMax);
@@ -6648,8 +6657,14 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                     spritetype *pFX = gFX.fxSpawn(pVectorData->surfHit[nSurf].fx1, nSector, x, y, z);
                     if (pFX)
                     {
-                        pFX->ang = (GetWallAngle(nWall)+512)&2047;
-                        pFX->cstat |= 16;
+                        int wAng = GetWallAngle(nWall);
+                        int sAng = (wAng + kAng90) & kAngMask;
+
+                        pFX->ang = sAng;
+                        pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_WALL;
+                        
+                        if (!CanPutOnWall(pFX, nWall, wAng, kAng60))
+                            gFX.fxKill(pFX->index);
                     }
                 }
             }
