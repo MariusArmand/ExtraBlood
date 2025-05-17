@@ -4,7 +4,9 @@ Fork of the Reverse-engineered port of the Build game Blood [[NBlood](https://gi
 ### Distinctive features
 #### Gore
 - More and longer lasting gore
-- Decals and blood fx on the ceiling
+- Decals and blood fx on ceilings
+- Decals on floors
+- Blood fx on floors follow slope
 #### Dual wielding
 - Dual wield flarepistols, shotguns, tommyguns and teslacannons (toggled by configurable keyboard key)
 - Cultists have an increased chance to drop their weapons to accommodate the dual wield mechanic (Green cultists drop flarepistols and flares)
@@ -15,7 +17,7 @@ Fork of the Reverse-engineered port of the Build game Blood [[NBlood](https://gi
 ***
 
 ### To Do
-- Floor decals
+- Ideas are welcome
 
 ***
 
