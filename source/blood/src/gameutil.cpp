@@ -953,7 +953,6 @@ void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int*
 // ceiling fx
 // for floor/sloped sprites
 void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* x3, int* y3, int* x4, int* y4, char flags)
-void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* x3, int* y3, int* x4, int* y4, char flags)
 {
 	int t, i, cx, cy, xoff = 0, yoff = 0;
 	int nPic = pSpr->picnum, nAng = pSpr->ang & kAngMask;
