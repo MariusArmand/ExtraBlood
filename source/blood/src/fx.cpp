@@ -93,14 +93,14 @@ FXDATA gFXData[] = {
     { kCallbackNone, 1, 56, 1, -13981, 5120, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 57, 1, 0, 2048, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 58, 1, 0, 2048, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // blood splat
+    { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // floor blood splat
     { kCallbackFXBouncingSleeve, 2, 62, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 63, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 64, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 65, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 66, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 67, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // bullet decal
+    { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // wall bullet decal
     { kCallbackNone, 0, 0, 3, 34952, 8192, 0, 2078, 64, 64, 0, -8, 0 },
     { kCallbackNone, 0, 0, 3, 34952, 8192, 0, 1106, 64, 64, 0, -8, 0 },
     { kCallbackNone, 0, 0, 3, 58254, 3328, 480, 2406, 48, 48, 0, 0, 0 },
@@ -114,6 +114,9 @@ FXDATA gFXData[] = {
     { kCallbackFXPodBloodSplat, 2, 0, 3, 27962, 4096, 480, 4028, 32, 32, 0, -16, 0 },
     { kCallbackNone, 2, 0, 0, 0, 0, 480, 926, 32, 32, 610, -12, 0 },
     { kCallbackNone, 1, 70, 1, -13981, 5120, 0, 0, 0, 0, 0, 0, 0 },
+    { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // marius, ceiling fx, ceiling blood splat
+    { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // marius, ceiling fx, ceiling bullet decal
+    { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // marius, floor fx, floor bullet decal
 };
 
 void CFX::fxKill(int nSprite)
@@ -186,6 +189,7 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
             duration *= 10;
             break;
         case FX_36: // blood splat
+        case FX_57: // ceiling blood splat
             if (!duration)
                 duration = pFX->duration;
             duration *= 200;
@@ -349,7 +353,7 @@ void CFX::fxProcess(void)
                     // spawn a blood splat on the ceiling where a bloodspurt hits the ceiling
                     if (pFXData->funcID == kCallbackFXBloodBits)
                     {
-                        fxSpawnCeiling(FX_36, nSector, pSprite->x, pSprite->y, ceilZ + 3, Random2(512));
+                        fxSpawnCeiling(FX_57, nSector, pSprite->x, pSprite->y, ceilZ + 3, Random2(512));
                     }
                 }
                 //end marius
@@ -377,6 +381,21 @@ void CFX::fxProcess(void)
         {
             // use tweaked gravity
             zvel[nSprite] += nGravity;
+        
+            // reset z after Z-Motion Sprite sector move
+            int32_t floorZ, ceilZ;
+            getzsofslope(nSector, pSprite->x, pSprite->y, &ceilZ, &floorZ);
+            switch (pSprite->type)
+            {
+            case FX_36: // floor blood decal
+            case FX_59: // floor bullet decal
+                pSprite->z = floorZ;
+                break;
+            case FX_57: // ceiling blood decal
+            case FX_58: // ceiling bullet decal
+                pSprite->z = ceilZ + 3;
+                break;
+            }
         }
         // end marius
     }

@@ -6603,7 +6603,7 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                 else // extrablood code
                 {
                     nSurf = surfType[sector[nSector].ceilingpicnum];
-                    fxSpawnCeiling(FX_43, nSector, x, y, z, Random2(512)); // spawn a decal on the ceiling
+                    fxSpawnCeiling(FX_58, nSector, x, y, z, Random2(512)); // spawn a bullet decal on the ceiling
                 }
             }
             // end marius
@@ -6633,7 +6633,7 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                     case kSurfMetal:
                     case kSurfStone:
                     case kSurfWood:
-                        fxSpawnFloor(FX_43, nSector, x, y, z, Random2(512)); // spawn a decal on the floor
+                        fxSpawnFloor(FX_59, nSector, x, y, z, Random2(512)); // spawn a bullet decal on the floor
                         break;
                     }                    
                 }
