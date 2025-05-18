@@ -83,10 +83,17 @@ int GetDistToLine(int x1, int y1, int x2, int y2, int x3, int y3);
 unsigned int ClipMove(int *x, int *y, int *z, int *nSector, int xv, int yv, int wd, int cd, int fd, unsigned int nMask);
 int GetClosestSectors(int nSector, int x, int y, int nDist, short *pSectors, char *pSectBit);
 int GetClosestSpriteSectors(int nSector, int x, int y, int nDist, short *pSectors, char *pSectBit, short *pWalls = NULL, bool bAccurateCheck = false);
-void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* zt, int* zb, char flags = 0x07);
+void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* zt = NULL, int* zb = NULL, char flags = 0x07);
 // NoOne, extrablood
 // ceiling fx
-void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* x3, int* y3, int* x4, int* y4, char flags);
+void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int* x3, int* y3, int* x4, int* y4, char flags = 0x07);
 bool SprInside(spritetype* pSpr, int nSect);
+void OffsetPos(int oX, int oY, int oZ, int nAng, int* x, int* y, int* z);
+void DoWallCorrection(int nWall, int* x, int* y, int step = 4);
+char CanPutOnWall(spritetype* pSpr, int nWall, int wAng, int nMaxDang);
+inline char CanPutOnWall(spritetype* pSpr, int nWall, int nMaxDang = kAng60)
+{
+    CanPutOnWall(pSpr, nWall, GetWallAngle(nWall), nMaxDang);
+}
 // End NoOne, extrablood
 bool IsFloorPanning(int nSector); // marius, floor fx
