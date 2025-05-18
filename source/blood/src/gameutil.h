@@ -93,7 +93,7 @@ void DoWallCorrection(int nWall, int* x, int* y, int step = 4);
 char CanPutOnWall(spritetype* pSpr, int nWall, int wAng, int nMaxDang);
 inline char CanPutOnWall(spritetype* pSpr, int nWall, int nMaxDang = kAng60)
 {
-    CanPutOnWall(pSpr, nWall, GetWallAngle(nWall), nMaxDang);
+    return CanPutOnWall(pSpr, nWall, GetWallAngle(nWall), nMaxDang);
 }
 // End NoOne, extrablood
 bool IsFloorPanning(int nSector); // marius, floor fx

@@ -6625,7 +6625,17 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                 else // extrablood code
                 {
                     nSurf = surfType[sector[nSector].floorpicnum];
-                    fxSpawnFloor(FX_43, nSector, x, y, z, Random2(512)); // spawn a decal on the floor
+                    switch (nSurf)
+                    {
+                    case kSurfClay:
+                    case kSurfDirt:
+                    case kSurfFlesh:
+                    case kSurfMetal:
+                    case kSurfStone:
+                    case kSurfWood:
+                        fxSpawnFloor(FX_43, nSector, x, y, z, Random2(512)); // spawn a decal on the floor
+                        break;
+                    }                    
                 }
             }
             // end marius
@@ -6640,16 +6650,17 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
             {
                 // NoOne, extrablood
                 // wall fx
-                if (VanillaMode()) 
+                int x, y;
+                if (VanillaMode()) // original code
                 {
-                    int x = gHitInfo.hitx-mulscale14(a4, 16);
-                    int y = gHitInfo.hity-mulscale14(a5, 16);
+                    x = gHitInfo.hitx-mulscale14(a4, 16);
+                    y = gHitInfo.hity-mulscale14(a5, 16);
                 }
-                else
+                else // extrablood code
                 {
                     // put it closer to the wall
-                    int x = gHitInfo.hitx;
-                    int y = gHitInfo.hity;
+                    x = gHitInfo.hitx;
+                    y = gHitInfo.hity;
                     DoWallCorrection(nWall, &x, &y);
                 }
                 // end NoOne, extrablood
