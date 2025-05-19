@@ -396,6 +396,12 @@ void CFX::fxProcess(void)
                 pSprite->z = ceilZ + 3;
                 break;
             }
+
+            // kill floor/ceiling fx if it is no longer in the original sector (e.g. due to a slide marked sector such as the grave in e1m1) 
+            if ((pSprite->type >= FX_57 && pSprite->type <= FX_59) && !SprInside(pSprite, nSector)) 
+            {
+                gFX.fxKill(pSprite->index); 
+            }
         }
         // end marius
     }
