@@ -84,10 +84,8 @@ enum FX_ID {
     FX_55,
     FX_56,
     // marius
-    // celing fx
     FX_57, 
     FX_58,
-    // floor fx
     FX_59,
     // end marius
     kFXMax

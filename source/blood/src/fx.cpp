@@ -411,7 +411,8 @@ void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         pFX->ang = angle;
 
         // set initial alignment before spriteSetSlope
-        pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | 0x4000; // 0x4000 is ceiling move mask
+        pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | CSTAT_SPRITE_YFLIP | 0x4000; // 0x4000 is ceiling move mask
+        pFX->cstat &= ~CSTAT_SPRITE_ONE_SIDED; // disable one sided flag to ensure we can flip around and randomize look
 
         // apply ceiling slope                    
         if (sector[nSector].ceilingstat&2) // if it's a sloped ceiling
@@ -434,6 +435,10 @@ void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         // chance to flip to randomize look
         if (Chance(0X8000))
         {
+            pFX->cstat |= CSTAT_SPRITE_XFLIP;
+        }
+        if (Chance(0X8000))
+        {
             pFX->cstat |= CSTAT_SPRITE_YFLIP;
         }
 
@@ -442,7 +447,33 @@ void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         // - in a lower ror sector
         if (!SprInside(pFX, nSector) || gLowerLink[nSector] > -1) 
         {
-            gFX.fxKill(pFX->index);
+            gFX.fxKill(pFX->index); 
+        }
+        else
+        {
+            if (nFx == FX_57 && Chance(0x8000))
+            {
+                // spawn blood drips on their own invisible dummy ceiling bloodsplat
+                // this ensures kCallbackRemove won't remove the original ceiling bloodsplat
+                spritetype *pDFX = gFX.fxSpawn(nFx, nSector, pFX->x, pFX->y, pFX->z);
+                if (pDFX)
+                {
+                    pDFX->ang = pFX->ang;
+                    pDFX->cstat = pFX->cstat | CSTAT_SPRITE_INVISIBLE;
+                    int delay = Chance(0x8000) ? 85 : 150; // 50% chance for 85, 50% chance for 150
+                    evPost(pDFX->index, 3, delay, kCallbackFXBloodSpurt);
+                    if (delay == 85)
+                    {
+                        // when spawned with least delay, wait longer to stop dripping
+                        evPost(pDFX->index, 3, delay + 10, kCallbackRemove);
+                    }
+                    else
+                    {
+                        // when spawned with more delay, wait less long to stop dripping
+                        evPost(pDFX->index, 3, delay + 2, kCallbackRemove);
+                    }
+                }
+            }
         }
     }
 }
@@ -456,7 +487,8 @@ void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         pFX->ang = angle;
 
         // set initial alignment before spriteSetSlope
-        pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | 0x2000; // 0x2000 is floor move mask
+        pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_SLOPE | CSTAT_SPRITE_YFLIP | 0x2000; // 0x2000 is floor move mask
+        pFX->cstat &= ~CSTAT_SPRITE_ONE_SIDED; // disable one sided flag to ensure we can flip around and randomize look
 
         // apply floor slope                    
         if (sector[nSector].floorstat&2) // if it's a sloped floor
@@ -477,6 +509,10 @@ void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         }
 
         // chance to flip to randomize look
+        if (Chance(0X8000))
+        {
+            pFX->cstat |= CSTAT_SPRITE_YFLIP;
+        }
         if (Chance(0X8000))
         {
             pFX->cstat |= CSTAT_SPRITE_XFLIP;
