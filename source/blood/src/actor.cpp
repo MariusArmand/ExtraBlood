@@ -6837,7 +6837,7 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                     // splatIncrement for default
                     static const int kMaxSplatIncrementBase = 5; // base for random splat increment
                     static const int kShotgunSplatChance = 0x4000; // 25% chance for shotgun-like effects
-                    static const int kTommySplatChance = 0x4000; // 25% chance for tommy-like effects                    
+                    static const int kTommySplatChance = 0x4000; // 25% chance for tommy-like effects
 
                     switch (pSprite->type) {
                     case kDudePhantasm:
@@ -6856,52 +6856,64 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                         break;
                     default:
                         {
-                            int splatIncrement = kMaxSplatIncrementBase - gGameOptions.nDifficulty;
-                            splatIncrement = splatIncrement >> 1; // divide by 2 by shifting bits one position to the right
-                            int bloodSplats = pVectorData->bloodSplats + splatIncrement;
+                            #ifdef NOONE_EXTENSIONS
+                            if (pSprite->type == kDudeModernCustom && DudeIsSmall(pSprite))   
+                            {
+                                for (int i = 0; i < pVectorData->bloodSplats; i++)
+                                    if (Chance(pVectorData->splatChance))
+                                        fxSpawnBlood(pSprite, pVectorData->dmg<<4);       
+                                break;
+                            }
+                            #endif
+                            else
+                            {
+                                int splatIncrement = kMaxSplatIncrementBase - gGameOptions.nDifficulty;
+                                splatIncrement = splatIncrement >> 1; // divide by 2 by shifting bits one position to the right
+                                int bloodSplats = pVectorData->bloodSplats + splatIncrement;
 
-                            if (IsPlayerSprite(pShooter)) { // shooter is a player
-                                int nPlayer = pShooter->type-kDudePlayer1; // calculate player index from shooter type
-                                dassert(nPlayer >= 0 && nPlayer < kMaxPlayers);
-                                PLAYER *pPlayer = &gPlayer[nPlayer];
+                                if (IsPlayerSprite(pShooter)) { // shooter is a player
+                                    int nPlayer = pShooter->type-kDudePlayer1; // calculate player index from shooter type
+                                    dassert(nPlayer >= 0 && nPlayer < kMaxPlayers);
+                                    PLAYER *pPlayer = &gPlayer[nPlayer];
 
-                                for (int j = 0; j < bloodSplats; j++) 
-                                {
-                                    switch (pPlayer->curWeapon)
+                                    for (int j = 0; j < bloodSplats; j++) 
                                     {
-                                    case kWeaponShotgun:
-                                        if (Chance(kShotgunSplatChance)) // apply a chance to limit blood splats when using shotgun
+                                        switch (pPlayer->curWeapon)
+                                        {
+                                        case kWeaponShotgun:
+                                            if (Chance(kShotgunSplatChance)) // apply a chance to limit blood splats when using shotgun
+                                                fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                            break;
+                                        case kWeaponTommy:
+                                            if (Chance(kTommySplatChance)) // apply a chance to limit blood splats when using tommy
+                                                fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                            break;
+                                        default:
                                             fxSpawnBlood(pSprite, pVectorData->dmg<<4);
-                                        break;
-                                    case kWeaponTommy:
-                                        if (Chance(kTommySplatChance)) // apply a chance to limit blood splats when using tommy
-                                            fxSpawnBlood(pSprite, pVectorData->dmg<<4);
-                                        break;
-                                    default:
-                                        fxSpawnBlood(pSprite, pVectorData->dmg<<4);
-                                        break;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            else // shooter is not a player
-                            {
-                                for (int j = 0; j < bloodSplats; j++) 
+                                else // shooter is not a player
                                 {
-                                    switch (pShooter->type) 
+                                    for (int j = 0; j < bloodSplats; j++) 
                                     {
-                                    case kDudeCultistShotgun:
-                                    case kDudeCultistShotgunProne:
-                                        if (Chance(kShotgunSplatChance)) // apply a chance to limit blood splats when using shotgun
+                                        switch (pShooter->type) 
+                                        {
+                                        case kDudeCultistShotgun:
+                                        case kDudeCultistShotgunProne:
+                                            if (Chance(kShotgunSplatChance)) // apply a chance to limit blood splats when using shotgun
+                                                fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                            break;
+                                        case kDudeCultistTommy:
+                                        case kDudeCultistTommyProne:
+                                            if (Chance(kTommySplatChance)) // apply a chance to limit blood splats when using tommy
                                             fxSpawnBlood(pSprite, pVectorData->dmg<<4);
-                                        break;
-                                    case kDudeCultistTommy:
-                                    case kDudeCultistTommyProne:
-                                        if (Chance(kTommySplatChance)) // apply a chance to limit blood splats when using tommy
-                                        fxSpawnBlood(pSprite, pVectorData->dmg<<4);
-                                        break;
-                                    default:
-                                        fxSpawnBlood(pSprite, pVectorData->dmg<<4);
-                                        break;
+                                            break;
+                                        default:
+                                            fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -7575,3 +7587,14 @@ void actDoLight(int nSprite)
 #endif
 }
 #endif // POLYMER
+
+// marius
+bool DudeIsSmall(spritetype *pSprite)
+{
+    int top, bottom;
+    GetSpriteExtents(pSprite, &top, &bottom);
+
+    int dudeSize = (bottom - top) / 256;
+    return dudeSize < 32;
+}
+// end marius
