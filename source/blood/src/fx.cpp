@@ -298,11 +298,11 @@ void CFX::fxProcess(void)
         if (zvel[nSprite])
             pSprite->z += zvel[nSprite]>>8;
         // marius
-        // embed NotBlood underwater gravity behaviour
+        // embed NotBlood underwater gravity behavior
 		const bool bCasingType = (pSprite->type >= FX_37) && (pSprite->type <= FX_42);
 		if (!VanillaMode() && bCasingType && IsUnderwaterSector(pSprite->sectnum)) // lower gravity by 75% underwater (only for bullet casings)
 			nGravity >>= 2;
-        // embed NotBlood casing bounce back behaviour
+        // embed NotBlood casing bounce back behavior
 		if (!VanillaMode() && bCasingType) // check if new xy position is within a wall
 		{
 			if (!cansee(oldPos.x, oldPos.y, oldPos.z, pSprite->sectnum, pSprite->x, pSprite->y, oldPos.z, pSprite->sectnum)) // if new position has clipped into wall, invert velocity and continue
@@ -313,6 +313,15 @@ void CFX::fxProcess(void)
 				pSprite->y = oldPos.y + (yvel[nSprite]>>12);
 			}
 		}
+        // embed NotBlood gib drag against wall behavior
+        else if (!VanillaMode() && (pSprite->type == FX_27 || pSprite->type == FX_13)) // check if new xy position is within a wall
+        {
+            if ((xvel[nSprite] || yvel[nSprite]) && !cansee(oldPos.x, oldPos.y, oldPos.z, pSprite->sectnum, pSprite->x, pSprite->y, oldPos.z, pSprite->sectnum)) // if new position has clipped into wall, freeze xy position
+            {
+                pSprite->x = oldPos.x;
+                pSprite->y = oldPos.y;
+            }
+        }
         // end marius	
         // Weird...
         if (xvel[nSprite] || (yvel[nSprite] && pSprite->z >= sector[pSprite->sectnum].floorz))
@@ -457,7 +466,7 @@ void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         }
         else
         {
-            if (nFx == FX_57 && Chance(0x8000))
+            if (nFx == FX_57 && Chance(0xBFFF)) // 75% chance
             {
                 // spawn blood drips on their own invisible dummy ceiling bloodsplat
                 // this ensures kCallbackRemove won't remove the original ceiling bloodsplat
