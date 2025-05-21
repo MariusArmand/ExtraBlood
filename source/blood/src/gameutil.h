@@ -90,10 +90,10 @@ void GetSpriteExtents(spritetype* pSpr, int* x1, int* y1, int* x2, int* y2, int*
 bool SprInside(spritetype* pSpr, int nSect);
 void OffsetPos(int oX, int oY, int oZ, int nAng, int* x, int* y, int* z);
 void DoWallCorrection(int nWall, int* x, int* y, int step = 4);
-char CanPutOnWall(spritetype* pSpr, int nWall, int wAng, int nMaxDang);
-inline char CanPutOnWall(spritetype* pSpr, int nWall, int nMaxDang = kAng60)
+char CanPutOnWall(spritetype* pSpr, int nWall, int wAng, int nMaxDang, int nTopOffset);
+inline char CanPutOnWall(spritetype* pSpr, int nWall, int nMaxDang = kAng60, int nTopOffset = 0)
 {
-    return CanPutOnWall(pSpr, nWall, GetWallAngle(nWall), nMaxDang);
+    return CanPutOnWall(pSpr, nWall, GetWallAngle(nWall), nMaxDang, nTopOffset);
 }
 // End NoOne, extrablood
 bool IsFloorPanning(int nSector); // marius, floor fx

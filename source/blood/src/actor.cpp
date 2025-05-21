@@ -6806,6 +6806,13 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                                         pFX = gFX.fxSpawn(t2, nSector, x, y, z);
                                     else if(t3 > FX_NONE)
                                         pFX = gFX.fxSpawn(t3, nSector, x, y, z);
+
+                                    if (pFX)
+                                    {
+                                        zvel[pFX->index] = 0x2222;
+                                        pFX->ang = (GetWallAngle(nWall)+512)&2047;
+                                        pFX->cstat |= 16;
+                                    }                                        
                                 }
                                 else // extrablood code
                                 {
@@ -6813,14 +6820,26 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                                         pFX = gFX.fxSpawn(t2, nSector, x, y, z);
                                     else if(t3 > FX_NONE)
                                         pFX = gFX.fxSpawn(t3, nSector, x, y, z);
+
+                                    if (pFX)
+                                    {
+                                        zvel[pFX->index] = 0x2222;
+
+                                        int wAng = GetWallAngle(nWall);
+                                        int sAng = (wAng + kAng90) & kAngMask;
+
+                                        pFX->ang = sAng;
+                                        pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_WALL;
+                                        
+                                        int top, bottom;
+                                        GetSpriteExtents(pFX, &top, &bottom);
+                                        int spriteHeight = bottom - top;
+
+                                        if (!CanPutOnWall(pFX, nWall, wAng, kAng45, spriteHeight))
+                                            gFX.fxKill(pFX->index);
+                                    }
                                 }
                                 // end marius
-                                if (pFX)
-                                {
-                                    zvel[pFX->index] = 0x2222;
-                                    pFX->ang = (GetWallAngle(nWall)+512)&2047;
-                                    pFX->cstat |= 16;
-                                }
                             }
                         }
                     }

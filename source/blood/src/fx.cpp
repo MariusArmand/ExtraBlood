@@ -353,7 +353,7 @@ void CFX::fxProcess(void)
                     // spawn a blood splat on the ceiling where a bloodspurt hits the ceiling
                     if (pFXData->funcID == kCallbackFXBloodBits)
                     {
-                        fxSpawnCeiling(FX_57, nSector, pSprite->x, pSprite->y, ceilZ + 3, Random2(512));
+                        fxSpawnCeiling(FX_57, nSector, pSprite->x, pSprite->y, ceilZ, Random2(512));
                     }
                 }
                 //end marius
@@ -411,7 +411,7 @@ void CFX::fxProcess(void)
 // ceiling fx
 void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
 {
-    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z);
+    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z + 3);
     if (pFX)
     {
         pFX->ang = angle;
@@ -487,7 +487,7 @@ void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
 // floor fx
 void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle)
 {
-    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z);
+    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z - 3);
     if (pFX)
     {
         pFX->ang = angle;

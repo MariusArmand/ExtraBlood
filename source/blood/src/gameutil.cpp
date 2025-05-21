@@ -1057,7 +1057,7 @@ void DoWallCorrection(int nWall, int* x, int* y, int step)
     OffsetPos(0, step, 0, (GetWallAngle(nWall) + kAng90) & kAngMask, x, y, NULL);
 }
 
-char CanPutOnWall(spritetype* pSpr, int nWall, int wAng, int nMaxDang)
+char CanPutOnWall(spritetype* pSpr, int nWall, int wAng, int nMaxDang, int nTopOffset)
 {
     hitdata_t hit; vec3_t pos;
     int hAng = (wAng + kAng90 + kAng180) & kAngMask;
@@ -1069,14 +1069,17 @@ char CanPutOnWall(spritetype* pSpr, int nWall, int wAng, int nMaxDang)
     if ((nSect = wall[nWall].nextsector) >= 0)
     {
         getzsofslope(nSect, pSpr->x, pSpr->y, &zt, &zb);
+
+        // offset the ceiling
+        zt -= nTopOffset; // lower ceiling (expand valid range upward)
         
-        // top point above floor
+        // top point above floor and below adjusted ceiling
         if (sz[0] <= zb && sz[0] > zt)
             return 0;
 
-        // bot point below ceil
-        if (sz[1] >= zt && sz[0] < zb)
-           return 0;
+        // bottom point below adjusted ceiling and above floor
+        if (sz[1] >= zt && sz[1] < zb)
+            return 0;
     }
 
     while (--i >= 0)
