@@ -4290,13 +4290,19 @@ void ProcessTouchObjects(spritetype *pSprite, int nXSprite)
                 sfxPlay3DSound(pSprite, 374, 0, 0);
                 break;
             case kThingZombieHead:
-                if (pPlayer) {
-                    if (pPlayer->kickPower > gFrameClock) return;
-                    pPlayer->kickPower = (int)gFrameClock+60;
+                // marius
+                // head 'n gibs
+                if (VanillaMode()) //original code
+                {
+                    if (pPlayer) {
+                        if (pPlayer->kickPower > gFrameClock) return;
+                        pPlayer->kickPower = (int)gFrameClock+60;
+                    }
+                    actKickObject(pSprite, pSprite2);
+                    sfxPlay3DSound(pSprite->x, pSprite->y, pSprite->z, 357, pSprite->sectnum);
+                    actDamageSprite(-1, pSprite2, kDamageFall, 80);
                 }
-                actKickObject(pSprite, pSprite2);
-                sfxPlay3DSound(pSprite->x, pSprite->y, pSprite->z, 357, pSprite->sectnum);
-                actDamageSprite(-1, pSprite2, kDamageFall, 80);
+                // end marius
                 break;
             case kTrapSawCircular:
                 if (!pXSprite2->state) actDamageSprite(nSprite, pSprite, kDamageBullet, 1);
@@ -4478,6 +4484,16 @@ int MoveThing(spritetype *pSprite)
     if (bottom >= floorZ)
     {
         actTouchFloor(pSprite, pSprite->sectnum);
+        // marius
+        // head 'n gibs
+        if (!VanillaMode() && (pSprite->type == kThingBloodBits || pSprite->type == kThingZombieHead))
+        {
+            // disable block and set proximity flag
+            XSPRITE *pXSprite = &xsprite[pSprite->extra];
+            pSprite->cstat &= ~CSTAT_SPRITE_BLOCK;
+            pXSprite->Proximity = 1;
+        }
+        // end marius
         gSpriteHit[nXSprite].florhit = floorHit;
         pSprite->z += floorZ-bottom;
         int v20 = zvel[nSprite]-velFloor[pSprite->sectnum];
@@ -5504,7 +5520,11 @@ void actProcessSprites(void)
                             proxyDist = 512;
                         }
                         
-                        if (CheckProximity(pSprite2, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, proxyDist)) {
+                        if (CheckProximity(pSprite2, pSprite->x, pSprite->y, pSprite->z, pSprite->sectnum, proxyDist) &&
+                        // marius
+                        // head 'n gibs
+                        // skip gibs and zombiehead in this part
+                            (VanillaMode() || (pSprite->type != kThingBloodBits && pSprite->type != kThingZombieHead))) {
 
                             switch (pSprite->type) {
                                 case kThingDroppedLifeLeech:
@@ -5527,6 +5547,38 @@ void actProcessSprites(void)
                             trTriggerSprite(nSprite, pXSprite, kCmdSpriteProximity, nSprite2);
                         }
                     }
+
+                    // marius
+                    // head 'n gibs
+                    if (!VanillaMode()) // extrablood code
+                    {
+                        int zOffset = pSprite->z - pSprite2->z; // offset between dude z and thing z
+                        switch (pSprite->type) {
+                        case kThingBloodBits:
+                            if (CheckProximity(pSprite2, pSprite->x, pSprite->y, pSprite->z - zOffset, pSprite->sectnum, 16))
+                            {
+                                // splat gibs
+                                if (pSprite->owner == -1) actPropagateSpriteOwner(pSprite, pSprite2);
+                                trTriggerSprite(nSprite, pXSprite, kCmdSpriteProximity, nSprite2);
+                            }
+                            break;
+                        case kThingZombieHead:
+                            if (pSprite->flags != 7 && CheckProximity(pSprite2, pSprite->x, pSprite->y, pSprite->z - zOffset, pSprite->sectnum, 20))
+                            {                   
+                                // kick head         
+                                PLAYER *pPlayer = NULL;
+                                if (IsPlayerSprite(pSprite2))
+                                    pPlayer = &gPlayer[pSprite2->type-kDudePlayer1];
+                                if (pPlayer)
+                                    pPlayer->kickPower = (int)gFrameClock+60;
+                                actKickObject(pSprite2, pSprite);
+                                sfxPlay3DSound(pSprite2->x, pSprite2->y, pSprite2->z, 357, pSprite->sectnum);
+                                actDamageSprite(-1, pSprite, kDamageFall, 80);                            
+                                break;
+                            }
+                        }
+                    }
+                    // end marius   
                 }
             }
         }
@@ -6855,6 +6907,7 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                 {
                     // splatIncrement for default
                     static const int kMaxSplatIncrementBase = 5; // base for random splat increment
+                    static const int kPitchforkSplatChance = 0x6666; // 40% chance for pitchfork-like effects
                     static const int kShotgunSplatChance = 0x4000; // 25% chance for shotgun-like effects
                     static const int kTommySplatChance = 0x4000; // 25% chance for tommy-like effects
 
@@ -6899,6 +6952,10 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                                     {
                                         switch (pPlayer->curWeapon)
                                         {
+                                        case kWeaponPitchfork:
+                                            if (Chance(kPitchforkSplatChance)) // apply a chance to limit blood splats when using pitchfork
+                                                fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                            break;                                        
                                         case kWeaponShotgun:
                                             if (Chance(kShotgunSplatChance)) // apply a chance to limit blood splats when using shotgun
                                                 fxSpawnBlood(pSprite, pVectorData->dmg<<4);
