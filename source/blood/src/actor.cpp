@@ -5552,7 +5552,7 @@ void actProcessSprites(void)
                     // head 'n gibs
                     if (!VanillaMode()) // extrablood code
                     {
-                        int zOffset = pSprite->z - pSprite2->z; // offset between dude z and thing z
+                        int zOffset = (pSprite->z - pSprite2->z) / 2; // offset between dude z and thing z, divided by 2
                         switch (pSprite->type) {
                         case kThingBloodBits:
                             if (CheckProximity(pSprite2, pSprite->x, pSprite->y, pSprite->z - zOffset, pSprite->sectnum, 16))
