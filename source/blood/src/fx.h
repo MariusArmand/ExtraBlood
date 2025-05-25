@@ -87,6 +87,7 @@ enum FX_ID {
     FX_57, 
     FX_58,
     FX_59,
+    FX_60,
     // end marius
     kFXMax
 };
@@ -101,6 +102,7 @@ public:
 
 void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle = 0); // marius, ceiling fx
 void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle = 0); // marius, floor fx
+int fxSpawnFootprint(FX_ID nFx, int nSector, int x, int y, int z, int angle = 0); // marius, footprints
 void fxSpawnBlood(spritetype *pSprite, int a2);
 void fxSpawnPodBlood(spritetype *pSprite, int a2);
 void fxSpawnEjectingBrass(spritetype *pSprite, int z, int a3, int a4);

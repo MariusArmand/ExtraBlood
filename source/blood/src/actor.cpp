@@ -4979,6 +4979,56 @@ void MoveDude(spritetype *pSprite)
             floorZ = floorZ2;
             floorHit = floorHit2;
         }
+
+        // marius
+        // footprints
+        if (!VanillaMode())
+        {
+            if (pPlayer->footprintCountdown > 0 &&
+                (pPlayer->footprintSprite == -1 ||
+                klabs(sprite[pPlayer->footprintSprite].x - pSprite->x) > 384 ||
+                klabs(sprite[pPlayer->footprintSprite].y - pSprite->y) > 384))
+            {
+                // calculate offset for left/right footprints
+                int32_t offsetX = 0, offsetY = 0, offsetZ = 0;
+                int32_t offsetDistance = -64;
+                int32_t angle = pSprite->ang;
+                
+                // determine offset: right footprint (unflipped) on player's left, left footprint (flipped) on player's right
+                int32_t offsetDirection = (pPlayer->footprintFlip == CSTAT_SPRITE_XFLIP) ? -offsetDistance : offsetDistance;
+                OffsetPos(offsetDirection, 0, 0, angle, &offsetX, &offsetY, &offsetZ);
+
+                // validate sector for footprint position
+                short newSectnum = pSprite->sectnum;
+                updatesector(pSprite->x + offsetX, pSprite->y + offsetY, &newSectnum);
+
+                if (newSectnum != -1)
+                {
+                    int footprintsprite = fxSpawnFootprint(FX_60, newSectnum, 
+                                                        pSprite->x + offsetX, 
+                                                        pSprite->y + offsetY, 
+                                                        floorZ, angle);
+                    if (footprintsprite != -1)
+                    {
+                        pPlayer->footprintSprite = footprintsprite;
+                        if (pPlayer->footprintFlip == CSTAT_SPRITE_XFLIP)
+                        {
+                            // current: left footprint (flipped sprite, player's right side)
+                            sprite[pPlayer->footprintSprite].cstat |= CSTAT_SPRITE_XFLIP; // render as left footprint
+                            pPlayer->footprintFlip = 0; // next: right footprint
+                        }
+                        else
+                        {
+                            // current: right footprint
+                            // no cstat change needed (unflipped = right footprint)
+                            pPlayer->footprintFlip = CSTAT_SPRITE_XFLIP; // next: left footprint
+                        }
+                        pPlayer->footprintCountdown--;
+                    }
+                }
+            }
+        }
+        // end marius
     }
     if (floorZ <= bottom)
     {
@@ -5553,8 +5603,13 @@ void actProcessSprites(void)
                     if (!VanillaMode()) // extrablood code
                     {
                         int zOffset = pSprite->z - pSprite2->z; // offset between dude z and thing z
+
+                        PLAYER *pPlayer = NULL;
                         if (IsPlayerSprite(pSprite2))
-                            zOffset = zOffset / 2; // divide offset by 2 for played
+                        {
+                            pPlayer = &gPlayer[pSprite2->type-kDudePlayer1];
+                            zOffset = zOffset / 2; // divide offset by 2 for player
+                        }
 
                         switch (pSprite->type) {
                         case kThingBloodBits:
@@ -5563,15 +5618,15 @@ void actProcessSprites(void)
                                 // splat gibs
                                 if (pSprite->owner == -1) actPropagateSpriteOwner(pSprite, pSprite2);
                                 trTriggerSprite(nSprite, pXSprite, kCmdSpriteProximity, nSprite2);
+                                // reset footprint countdown
+                                if (pPlayer)
+                                    pPlayer->footprintCountdown = 20;
                             }
                             break;
                         case kThingZombieHead:
                             if (pSprite->flags != 7 && CheckProximity(pSprite2, pSprite->x, pSprite->y, pSprite->z - zOffset, pSprite->sectnum, 20))
                             {                   
                                 // kick head         
-                                PLAYER *pPlayer = NULL;
-                                if (IsPlayerSprite(pSprite2))
-                                    pPlayer = &gPlayer[pSprite2->type-kDudePlayer1];
                                 if (pPlayer)
                                     pPlayer->kickPower = (int)gFrameClock+60;
                                 actKickObject(pSprite2, pSprite);

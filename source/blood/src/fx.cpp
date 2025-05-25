@@ -117,6 +117,7 @@ FXDATA gFXData[] = {
     { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // marius, ceiling fx, ceiling blood splat
     { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // marius, ceiling fx, ceiling bullet decal
     { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // marius, floor fx, floor bullet decal
+    { kCallbackNone, 2, 0, 0, 0, 0, 960, 1902, 32, 32, 610, 0, 0 }, // marius, footprints
 };
 
 void CFX::fxKill(int nSprite)
@@ -190,6 +191,7 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
             break;
         case FX_36: // blood splat
         case FX_57: // ceiling blood splat
+        case FX_60: // footprint
             if (!duration)
                 duration = pFX->duration;
             duration *= 200;
@@ -398,7 +400,8 @@ void CFX::fxProcess(void)
             {
             case FX_36: // floor blood decal
             case FX_59: // floor bullet decal
-                pSprite->z = floorZ;
+            case FX_60: // footprint
+                pSprite->z = floorZ - 3;
                 break;
             case FX_57: // ceiling blood decal
             case FX_58: // ceiling bullet decal
@@ -407,7 +410,7 @@ void CFX::fxProcess(void)
             }
 
             // kill floor/ceiling fx if it is no longer in the original sector (e.g. due to a slide marked sector such as the grave in e1m1) 
-            if ((pSprite->type >= FX_57 && pSprite->type <= FX_59) && !SprInside(pSprite, nSector)) 
+            if ((pSprite->type >= FX_57 && pSprite->type <= FX_60) && !SprInside(pSprite, nSector)) 
             {
                 gFX.fxKill(pSprite->index); 
             }
@@ -541,6 +544,40 @@ void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         {
             gFX.fxKill(pFX->index);
         }
+    }
+}
+
+int fxSpawnFootprint(FX_ID nFx, int nSector, int x, int y, int z, int angle)
+{
+    if (!(sector[nSector].floorstat&2)) // if it's not a sloped floor
+    { 
+        spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z - 3);
+        if (pFX)
+        {
+            pFX->ang = angle;
+
+            // set alignment
+            pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_FLOOR | 0x2000; // 0x2000 is floor move mask
+
+            // delete fx if invalid conditions
+            if (!SprInside(pFX, nSector) || gUpperLink[nSector] > -1 || IsFloorPanning(nSector))
+            {
+                gFX.fxKill(pFX->index);
+                return -1;
+            }
+            else
+            {
+                return pFX->index;
+            }
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    else
+    {
+        return -1;
     }
 }
 // end marius

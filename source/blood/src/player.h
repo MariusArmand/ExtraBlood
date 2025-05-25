@@ -242,6 +242,12 @@ struct PLAYER
     int                 player_par;
     int                 nWaterPal;
     POSTURE             pPosture[kModeMax][kPostureMax];
+    // marius
+    // footprints
+    int                 footprintSprite;
+    int                 footprintFlip;
+    int                 footprintCountdown;
+    // end marius
 
     // Calculates checksum for multiplayer games. Skips data referenced
     // by pointers, like XSPRITE structs. Other bits might further be skipped.

@@ -1056,6 +1056,16 @@ void playerReset(PLAYER *pPlayer)
     #endif
     // reset posture (mainly required for resetting movement speed and jump height)
     playerResetPosture(pPlayer);
+
+    // marius
+    // footprints
+    if (!VanillaMode())
+    {
+        pPlayer->footprintSprite = -1;
+        pPlayer->footprintFlip = CSTAT_SPRITE_XFLIP;
+        pPlayer->footprintCountdown = 20;
+    }
+    // end marius
 }
 
 void playerResetScores(int nPlayer)
