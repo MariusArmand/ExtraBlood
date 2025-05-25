@@ -7,6 +7,8 @@ Fork of the Reverse-engineered port of the Build game Blood [[NBlood](https://gi
 - Decals and blood fx on ceilings
 - Decals on floors
 - Blood fx on floors follow slope
+- Squish gibs by running through them
+- Leave bloody footsteps after running through gibs
 #### Dual wielding
 - Dual wield flarepistols, shotguns, tommyguns and teslacannons (toggled by configurable keyboard key)
 - Cultists have an increased chance to drop their weapons to accommodate the dual wield mechanic (Green cultists drop flarepistols and flares)
