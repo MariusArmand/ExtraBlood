@@ -277,6 +277,7 @@ void actPostSprite(int nSprite, int nStatus);
 void actPostProcess(void);
 void MakeSplash(spritetype *pSprite, XSPRITE *pXSprite);
 void actBuildMissile(spritetype* pMissile, int nXSprite, int nSprite);
+// marius
 bool DudeIsSmall(spritetype *pSprite);
-
+// end marius
 extern int DudeDifficulty[];

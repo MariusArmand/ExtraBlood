@@ -4984,49 +4984,9 @@ void MoveDude(spritetype *pSprite)
         // footprints
         if (!VanillaMode())
         {
-            if (pPlayer->footprintCountdown > 0 &&
-                (pPlayer->footprintSprite == -1 ||
-                klabs(sprite[pPlayer->footprintSprite].x - pSprite->x) > 384 ||
-                klabs(sprite[pPlayer->footprintSprite].y - pSprite->y) > 384))
-            {
-                // calculate offset for left/right footprints
-                int32_t offsetX = 0, offsetY = 0, offsetZ = 0;
-                int32_t offsetDistance = -64;
-                int32_t angle = pSprite->ang;
-                
-                // determine offset: right footprint (unflipped) on player's left, left footprint (flipped) on player's right
-                int32_t offsetDirection = (pPlayer->footprintFlip == CSTAT_SPRITE_XFLIP) ? -offsetDistance : offsetDistance;
-                OffsetPos(offsetDirection, 0, 0, angle, &offsetX, &offsetY, &offsetZ);
-
-                // validate sector for footprint position
-                short newSectnum = pSprite->sectnum;
-                updatesector(pSprite->x + offsetX, pSprite->y + offsetY, &newSectnum);
-
-                if (newSectnum != -1)
-                {
-                    int footprintsprite = fxSpawnFootprint(FX_60, newSectnum, 
-                                                        pSprite->x + offsetX, 
-                                                        pSprite->y + offsetY, 
-                                                        floorZ, angle);
-                    if (footprintsprite != -1)
-                    {
-                        pPlayer->footprintSprite = footprintsprite;
-                        if (pPlayer->footprintFlip == CSTAT_SPRITE_XFLIP)
-                        {
-                            // current: left footprint (flipped sprite, player's right side)
-                            sprite[pPlayer->footprintSprite].cstat |= CSTAT_SPRITE_XFLIP; // render as left footprint
-                            pPlayer->footprintFlip = 0; // next: right footprint
-                        }
-                        else
-                        {
-                            // current: right footprint
-                            // no cstat change needed (unflipped = right footprint)
-                            pPlayer->footprintFlip = CSTAT_SPRITE_XFLIP; // next: left footprint
-                        }
-                        pPlayer->footprintCountdown--;
-                    }
-                }
-            }
+            if (bottom >= getflorzofslope(pSprite->sectnum, pSprite->x, pSprite->y)) // if player is really on sector floor (and not on some bridge sprite e.g.)
+                PlayerSetFootprint(pPlayer);
+            PlayerLeaveFootprint(pPlayer, floorZ);
         }
         // end marius
     }
@@ -5618,9 +5578,12 @@ void actProcessSprites(void)
                                 // splat gibs
                                 if (pSprite->owner == -1) actPropagateSpriteOwner(pSprite, pSprite2);
                                 trTriggerSprite(nSprite, pXSprite, kCmdSpriteProximity, nSprite2);
-                                // reset footprint countdown
+
                                 if (pPlayer)
-                                    pPlayer->footprintCountdown = 20;
+                                {
+                                    // set blood footprint for player
+                                    PlayerSetFootprint(pPlayer, kFootprintBlood);
+                                }
                             }
                             break;
                         case kThingZombieHead:
@@ -6713,7 +6676,16 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                 else // extrablood code
                 {
                     nSurf = surfType[sector[nSector].ceilingpicnum];
-                    fxSpawnCeiling(FX_58, nSector, x, y, z, Random2(512)); // spawn a bullet decal on the ceiling
+                    switch (nSurf)
+                    {
+                    case kSurfClay:
+                    case kSurfDirt:
+                    case kSurfMetal:
+                    case kSurfStone:
+                    case kSurfWood:                    
+                        fxSpawnCeiling(FX_58, nSector, x, y, z, Random2(512)); // spawn a bullet decal on the ceiling
+                        break;
+                    }                        
                 }
             }
             // end marius
@@ -6739,7 +6711,6 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                     {
                     case kSurfClay:
                     case kSurfDirt:
-                    case kSurfFlesh:
                     case kSurfMetal:
                     case kSurfStone:
                     case kSurfWood:
@@ -6797,7 +6768,8 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                             pFX->ang = sAng;
                             pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_WALL;
                             
-                            if (!CanPutOnWall(pFX, nWall, wAng, kAng60))
+                            if (!CanPutOnWall(pFX, nWall, wAng, kAng60)
+                                || (pFX->picnum == 838 && nSurf == kSurfFlesh)) // pFX is decal and surface is flesh
                                 gFX.fxKill(pFX->index);
                         }
                         // end NoOne, extrablood

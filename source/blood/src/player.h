@@ -244,6 +244,7 @@ struct PLAYER
     POSTURE             pPosture[kModeMax][kPostureMax];
     // marius
     // footprints
+    int                 footprintPicnum;
     int                 footprintSprite;
     int                 footprintFlip;
     int                 footprintCountdown;
@@ -369,3 +370,9 @@ void        playerLandingSound(PLAYER *pPlayer);
 void        PlayerSurvive(int, int nXSprite);
 void        PlayerKneelsOver(int, int nXSprite);
 void        playerHandChoke(PLAYER *pPlayer);
+// marius
+// footprints
+void PlayerSetFootprint(PLAYER *pPlayer);
+void PlayerSetFootprint(PLAYER *pPlayer, int nFootprintPicnum);
+void PlayerLeaveFootprint(PLAYER *pPlayer, int z);
+// end marius

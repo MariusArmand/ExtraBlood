@@ -56,6 +56,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "nnextsif.h"
 #endif
 
+#define kFootPrintCountdownMax 30 // marius, footprints
+
 PLAYER gPlayer[kMaxPlayers];
 PLAYER *gMe, *gView;
 
@@ -1061,9 +1063,10 @@ void playerReset(PLAYER *pPlayer)
     // footprints
     if (!VanillaMode())
     {
+        pPlayer->footprintPicnum = -1;
         pPlayer->footprintSprite = -1;
         pPlayer->footprintFlip = CSTAT_SPRITE_XFLIP;
-        pPlayer->footprintCountdown = 20;
+        pPlayer->footprintCountdown = 0;
     }
     // end marius
 }
@@ -2176,6 +2179,14 @@ void playerProcess(PLAYER *pPlayer)
             if (getceilzofslope(nSector, pSprite->x, pSprite->y) > pPlayer->zView)
                 pPlayer->isUnderwater = 0;
         }
+
+        // marius
+        // footprints
+        if (!VanillaMode())
+        {
+            PlayerSetFootprint(pPlayer);
+        }
+        // end marius        
     }
     if (!pPlayer->isUnderwater)
     {
@@ -2735,3 +2746,98 @@ void PlayerLoadSaveConstruct(void)
 {
     myLoadSave = new PlayerLoadSave();
 }
+
+// marius
+// footprints
+void PlayerSetFootprint(PLAYER *pPlayer)
+{
+    spritetype *pSprite = pPlayer->pSprite;
+    int nSector = pSprite->sectnum;
+
+    int surfPicnum = -1;
+    if (IsUnderwaterSector(nSector))
+    {
+        surfPicnum = sector[nSector].ceilingpicnum;
+    }
+    else
+    {
+        surfPicnum = sector[nSector].floorpicnum;
+    }
+
+    switch (surfType[surfPicnum]) {
+    case kSurfFlesh:
+        if (!(surfPicnum >= 2915 && surfPicnum <= 2924))
+            pPlayer->footprintPicnum = kFootprintBlood;
+        else
+            pPlayer->footprintPicnum = kFootprintWater;
+        pPlayer->footprintCountdown = kFootPrintCountdownMax;
+        break;
+    case kSurfWater:
+        pPlayer->footprintPicnum = kFootprintWater;
+        pPlayer->footprintCountdown = kFootPrintCountdownMax;
+        break;
+    case kSurfGoo:
+        pPlayer->footprintPicnum = kFootprintDirt;
+        pPlayer->footprintCountdown = kFootPrintCountdownMax;
+        break;
+    }
+}
+
+void PlayerSetFootprint(PLAYER *pPlayer, int nFootprintPicnum)
+{
+    pPlayer->footprintPicnum = nFootprintPicnum;
+    pPlayer->footprintCountdown = kFootPrintCountdownMax;
+}
+
+void PlayerLeaveFootprint(PLAYER *pPlayer, int z)
+{
+    spritetype *pSprite = pPlayer->pSprite;
+
+    if (pPlayer->footprintCountdown > 0 &&
+        pPlayer->footprintPicnum != -1 &&
+        (pPlayer->footprintSprite == -1 ||
+        klabs(sprite[pPlayer->footprintSprite].x - pSprite->x) > 384 ||
+        klabs(sprite[pPlayer->footprintSprite].y - pSprite->y) > 384))
+    {
+        // calculate offset for left/right footprints
+        int32_t offsetX = 0, offsetY = 0, offsetZ = 0;
+        int32_t offsetDistance = -64;
+        int32_t angle = pSprite->ang;
+        
+        // determine offset: right footprint (unflipped) on player's left, left footprint (flipped) on player's right
+        int32_t offsetDirection = (pPlayer->footprintFlip == CSTAT_SPRITE_XFLIP) ? -offsetDistance : offsetDistance;
+        OffsetPos(offsetDirection, 0, 0, angle, &offsetX, &offsetY, &offsetZ);
+
+        // validate sector for footprint position
+        short newSectnum = pSprite->sectnum;
+        updatesector(pSprite->x + offsetX, pSprite->y + offsetY, &newSectnum);
+
+        if (newSectnum != -1)
+        {
+            int footprintsprite = fxSpawnFootprint(FX_60, 
+                                                pPlayer->footprintPicnum,
+                                                newSectnum, 
+                                                pSprite->x + offsetX, 
+                                                pSprite->y + offsetY, 
+                                                z, angle);
+            if (footprintsprite != -1)
+            {
+                pPlayer->footprintSprite = footprintsprite;
+                if (pPlayer->footprintFlip == CSTAT_SPRITE_XFLIP)
+                {
+                    // current: left footprint (flipped sprite, player's right side)
+                    sprite[pPlayer->footprintSprite].cstat |= CSTAT_SPRITE_XFLIP; // render as left footprint
+                    pPlayer->footprintFlip = 0; // next: right footprint
+                }
+                else
+                {
+                    // current: right footprint
+                    // no cstat change needed (unflipped = right footprint)
+                    pPlayer->footprintFlip = CSTAT_SPRITE_XFLIP; // next: left footprint
+                }
+            }
+            pPlayer->footprintCountdown--; // countdown even if footprint was not able to spawn (e.g. during crossing a bridge)
+        }
+    }
+}
+// end marius

@@ -92,6 +92,16 @@ enum FX_ID {
     kFXMax
 };
 
+// marius
+// footprints
+enum
+{
+    kFootprintBlood = 1902,
+    kFootprintWater = 1903,
+    kFootprintDirt = 1904,
+};
+// end marius
+
 class CFX {
 public:
     void fxKill(int);
@@ -102,7 +112,7 @@ public:
 
 void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle = 0); // marius, ceiling fx
 void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle = 0); // marius, floor fx
-int fxSpawnFootprint(FX_ID nFx, int nSector, int x, int y, int z, int angle = 0); // marius, footprints
+int fxSpawnFootprint(FX_ID nFx, int nFootprintPicnum, int nSector, int x, int y, int z, int angle = 0); // marius, footprints
 void fxSpawnBlood(spritetype *pSprite, int a2);
 void fxSpawnPodBlood(spritetype *pSprite, int a2);
 void fxSpawnEjectingBrass(spritetype *pSprite, int z, int a3, int a4);

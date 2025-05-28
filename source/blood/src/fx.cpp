@@ -117,7 +117,7 @@ FXDATA gFXData[] = {
     { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // marius, ceiling fx, ceiling blood splat
     { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // marius, ceiling fx, ceiling bullet decal
     { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // marius, floor fx, floor bullet decal
-    { kCallbackNone, 2, 0, 0, 0, 0, 960, 1902, 32, 32, 610, 0, 0 }, // marius, footprints
+    { kCallbackNone, 2, 0, 0, 0, 0, 960, 0, 32, 32, 610, 0, 0 }, // marius, footprints
 };
 
 void CFX::fxKill(int nSprite)
@@ -547,19 +547,30 @@ void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle)
     }
 }
 
-int fxSpawnFootprint(FX_ID nFx, int nSector, int x, int y, int z, int angle)
+// footprints
+int fxSpawnFootprint(FX_ID nFx, int nFootprintPicnum, int nSector, int x, int y, int z, int angle)
 {
-    if (!(sector[nSector].floorstat&2)) // if it's not a sloped floor
+    int nXSector = sector[nSector].extra;
+    int nSurf = surfType[sector[nSector].floorpicnum];
+
+    if (!IsUnderwaterSector(nSector) && // if not underwater
+        sector[nSector].floorheinum == 0 && // floor is not sloped
+        (nXSector == -1 || xsector[nXSector].Depth == 0) && // sector has no depth
+        nSurf != kSurfFlesh && nSurf != kSurfWater && nSurf != kSurfGoo && nSurf != kSurfLava) // floor surface is appropriate
     { 
         spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z - 3);
         if (pFX)
         {
+            pFX->picnum = nFootprintPicnum;
             pFX->ang = angle;
 
             // set alignment
             pFX->cstat |= CSTAT_SPRITE_ALIGNMENT_FLOOR | 0x2000; // 0x2000 is floor move mask
 
-            // delete fx if invalid conditions
+            // delete fx when it is:
+            // - edging out of the sector
+            // - is in an upper ror sector
+            // - in a sector where floor is panning
             if (!SprInside(pFX, nSector) || gUpperLink[nSector] > -1 || IsFloorPanning(nSector))
             {
                 gFX.fxKill(pFX->index);
