@@ -2758,18 +2758,23 @@ void PlayerSetFootprint(PLAYER *pPlayer)
     if (IsUnderwaterSector(nSector))
     {
         surfPicnum = sector[nSector].ceilingpicnum;
+
+        // set a default footprint when underwater
+        pPlayer->footprintPicnum = kFootprintWater;
+        pPlayer->footprintCountdown = kFootPrintCountdownMax;
     }
     else
     {
         surfPicnum = sector[nSector].floorpicnum;
     }
 
+    // override default footprint with a more suitable one
     switch (surfType[surfPicnum]) {
     case kSurfFlesh:
-        if (!(surfPicnum >= 2915 && surfPicnum <= 2924))
-            pPlayer->footprintPicnum = kFootprintBlood;
-        else
+        if ((surfPicnum >= 2915 && surfPicnum <= 2924)) // looks like water
             pPlayer->footprintPicnum = kFootprintWater;
+        else
+            pPlayer->footprintPicnum = kFootprintBlood;
         pPlayer->footprintCountdown = kFootPrintCountdownMax;
         break;
     case kSurfWater:
@@ -2777,8 +2782,15 @@ void PlayerSetFootprint(PLAYER *pPlayer)
         pPlayer->footprintCountdown = kFootPrintCountdownMax;
         break;
     case kSurfGoo:
-        pPlayer->footprintPicnum = kFootprintDirt;
-        pPlayer->footprintCountdown = kFootPrintCountdownMax;
+        {
+            int nXSector = sector[nSector].extra;
+            if ((nXSector > -1 && xsector[nXSector].damageType > 0) && // damageType is set
+                (surfPicnum >= 1120 && surfPicnum <= 1126)) // green goo
+                pPlayer->footprintPicnum = kFootprintAcid;
+            else
+                pPlayer->footprintPicnum = kFootprintDirt;
+            pPlayer->footprintCountdown = kFootPrintCountdownMax;
+        }
         break;
     }
 }

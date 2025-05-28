@@ -99,6 +99,7 @@ enum
     kFootprintBlood = 1902,
     kFootprintWater = 1903,
     kFootprintDirt = 1904,
+    kFootprintAcid = 1906,
 };
 // end marius
 
