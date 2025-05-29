@@ -2840,12 +2840,14 @@ void PlayerLeaveFootprint(PLAYER *pPlayer, int z)
                     // current: left footprint (flipped sprite, player's right side)
                     sprite[pPlayer->footprintSprite].cstat |= CSTAT_SPRITE_XFLIP; // render as left footprint
                     pPlayer->footprintFlip = 0; // next: right footprint
+                    sprite[pPlayer->footprintSprite].ang -= kAng5;
                 }
                 else
                 {
                     // current: right footprint
                     // no cstat change needed (unflipped = right footprint)
                     pPlayer->footprintFlip = CSTAT_SPRITE_XFLIP; // next: left footprint
+                    sprite[pPlayer->footprintSprite].ang += kAng5;
                 }
             }
             pPlayer->footprintCountdown--; // countdown even if footprint was not able to spawn (e.g. during crossing a bridge)

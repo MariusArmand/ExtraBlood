@@ -3080,13 +3080,13 @@ void actKillDude(int nKillerSprite, spritetype *pSprite, DAMAGE_TYPE damageType,
                     else
                     {
                         if (nRand <= 10) actDropObject(pSprite, kItemWeaponTommygun);
-                        else if (nRand <= 50) actDropObject(pSprite, kItemAmmoTommygunFew);
+                        else if (nRand <= 70) actDropObject(pSprite, kItemAmmoTommygunFew);
                     }
                 }
                 else
                 {
                     if (nRand <= 10) actDropObject(pSprite, kItemWeaponTommygun);
-                    else if (nRand <= 50) actDropObject(pSprite, kItemAmmoTommygunFew);
+                    else if (nRand <= 70) actDropObject(pSprite, kItemAmmoTommygunFew);
                 }
             }
             // end marius
@@ -3115,13 +3115,13 @@ void actKillDude(int nKillerSprite, spritetype *pSprite, DAMAGE_TYPE damageType,
                     else
                     {
                         if (nRand <= 10) actDropObject(pSprite, kItemWeaponSawedoff);
-                        else if (nRand <= 50) actDropObject(pSprite, kItemAmmoSawedoffFew);
+                        else if (nRand <= 70) actDropObject(pSprite, kItemAmmoSawedoffFew);
                     }
                 }
                 else
                 {
                     if (nRand <= 10) actDropObject(pSprite, kItemWeaponSawedoff);
-                    else if (nRand <= 50) actDropObject(pSprite, kItemAmmoSawedoffFew);
+                    else if (nRand <= 70) actDropObject(pSprite, kItemAmmoSawedoffFew);
                 }
             }
             // end marius
