@@ -2773,7 +2773,7 @@ void PlayerSetFootprint(PLAYER *pPlayer)
     case kSurfFlesh:
         if ((surfPicnum >= 2915 && surfPicnum <= 2924)) // looks like water
             pPlayer->footprintPicnum = kFootprintWater;
-        else
+        else if (surfPicnum == 243 || surfPicnum == 1006 || surfPicnum == 1130) // limit to textures that look like blood
             pPlayer->footprintPicnum = kFootprintBlood;
         pPlayer->footprintCountdown = kFootPrintCountdownMax;
         break;

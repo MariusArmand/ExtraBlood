@@ -52,7 +52,10 @@ enum CALLBACK_ID {
     kCallbackMissileSpriteBlock = 23,
     kCallbackFxPodGreenBloodSpray = 24,
     #endif
+    kCallbackFXBloodBitsShort = 25, // marius
     kCallbackMax,
 };
+
+void BloodBits(int nSprite, int nFx); // marius
 
 extern void (*gCallback[kCallbackMax])(int);

@@ -88,6 +88,7 @@ enum FX_ID {
     FX_58,
     FX_59,
     FX_60,
+    FX_61,
     // end marius
     kFXMax
 };

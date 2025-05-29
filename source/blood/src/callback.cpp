@@ -403,44 +403,9 @@ void FinishHim(int nSprite) // 13
 
 void fxBloodBits(int nSprite) // 14
 {
-    spritetype *pSprite = &sprite[nSprite];
-    int ceilZ, ceilHit, floorZ, floorHit;
-    GetZRange(pSprite, &ceilZ, &ceilHit, &floorZ, &floorHit, pSprite->clipdist, CLIPMASK0);
-    int top, bottom;
-    GetSpriteExtents(pSprite, &top, &bottom);
-    pSprite->z += floorZ-bottom;
-    int nAngle = Random(2048);
-    int nDist = Random(16)<<4;
-    int x = pSprite->x+mulscale28(nDist, Cos(nAngle));
-    int y = pSprite->y+mulscale28(nDist, Sin(nAngle));
-    gFX.fxSpawn(FX_48, pSprite->sectnum, x, y, pSprite->z);
-    if (pSprite->ang == 1024)
-    {
-        const int nChannel = 28+(pSprite->index&2);
-        const int nFlags = !VanillaMode() ? 1|4 : 1; // don't cut off if channel is already occupied
-        dassert(nChannel < 32);
-        sfxPlay3DSound(pSprite, 385, nChannel, nFlags);
-    }
     // marius
-    // floor fx
-    if (Chance(0x5000))
-    {
-        if (VanillaMode()) // orginal code
-        {
-            spritetype *pFX = gFX.fxSpawn(FX_36, pSprite->sectnum, x, y, floorZ-64);
-            if (pFX)
-                pFX->ang = nAngle;
-
-        }
-        else // extrablood code
-        {
-            int32_t floorZ, ceilZ;
-            getzsofslope(pSprite->sectnum, x, y, &ceilZ, &floorZ);
-            fxSpawnFloor(FX_36, pSprite->sectnum, x, y, floorZ, Random2(512)); // spawn a decal on the floor
-        }
-    }
+    BloodBits(nSprite, FX_36);
     // end marius
-    gFX.fxFree(nSprite);
 }
 
 
@@ -768,6 +733,57 @@ void fxPodGreenBloodSpray(int nSprite) // 24
 }
 #endif
 
+// marius
+void fxBloodBitsShort(int nSprite) // 25
+{
+    BloodBits(nSprite, FX_61);
+}
+
+void BloodBits(int nSprite, int nFx)
+{
+    FX_ID nFxId = static_cast<FX_ID>(nFx); // marius, cast int to FX_ID
+
+    spritetype *pSprite = &sprite[nSprite];
+    int ceilZ, ceilHit, floorZ, floorHit;
+    GetZRange(pSprite, &ceilZ, &ceilHit, &floorZ, &floorHit, pSprite->clipdist, CLIPMASK0);
+    int top, bottom;
+    GetSpriteExtents(pSprite, &top, &bottom);
+    pSprite->z += floorZ-bottom;
+    int nAngle = Random(2048);
+    int nDist = Random(16)<<4;
+    int x = pSprite->x+mulscale28(nDist, Cos(nAngle));
+    int y = pSprite->y+mulscale28(nDist, Sin(nAngle));
+    gFX.fxSpawn(FX_48, pSprite->sectnum, x, y, pSprite->z);
+    if (pSprite->ang == 1024)
+    {
+        const int nChannel = 28+(pSprite->index&2);
+        const int nFlags = !VanillaMode() ? 1|4 : 1; // don't cut off if channel is already occupied
+        dassert(nChannel < 32);
+        sfxPlay3DSound(pSprite, 385, nChannel, nFlags);
+    }
+    // marius
+    // floor fx
+    if (Chance(0x5000))
+    {
+        if (VanillaMode()) // orginal code
+        {
+            spritetype *pFX = gFX.fxSpawn(FX_36, pSprite->sectnum, x, y, floorZ-64);
+            if (pFX)
+                pFX->ang = nAngle;
+
+        }
+        else // extrablood code
+        {
+            int32_t floorZ, ceilZ;
+            getzsofslope(pSprite->sectnum, x, y, &ceilZ, &floorZ);
+            fxSpawnFloor(nFxId, pSprite->sectnum, x, y, floorZ, Random2(512)); // spawn a decal on the floor
+        }
+    }
+    // end marius
+    gFX.fxFree(nSprite);
+}
+// end marius
+
 void(*gCallback[kCallbackMax])(int) =
 {
     fxFlameLick,
@@ -797,4 +813,5 @@ void(*gCallback[kCallbackMax])(int) =
     callbackMakeMissileBlocking, // the code is in nnexts.cpp
     fxPodGreenBloodSpray,
     #endif
+    fxBloodBitsShort, // marius
 };

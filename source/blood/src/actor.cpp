@@ -5601,6 +5601,34 @@ void actProcessSprites(void)
                     }
                     // end marius   
                 }
+                // marius
+                // head 'n gibs
+                if (!VanillaMode()) // extrablood code
+                {
+                    for (int nSprite3 = headspritestat[kStatProjectile]; nSprite3 >= 0; nSprite3 = nNextSprite) // loop through projectiles
+                    {
+                        nNextSprite = nextspritestat[nSprite3];
+                        spritetype *pSprite3 = &sprite[nSprite3];
+
+                        // if projectile is flame and target is zombie head
+                        if (pSprite3->type == kMissileFlameSpray &&
+                            pSprite->type == kThingZombieHead && 
+                            CheckProximityPoint(pSprite3->x, pSprite3->y, pSprite3->z, pSprite->x, pSprite->y, pSprite->z, 15))
+                        {
+                            // flame it
+                            if (pSprite->extra > 0)
+                            {
+                                XSPRITE *pXSprite = &xsprite[pSprite->extra];
+                                if (pXSprite->burnTime == 0)
+                                    evPost(pSprite->index, 3, 0, kCallbackFXFlameLick);
+                                int nOwner = actSpriteOwnerToSpriteId(pSprite3);
+                                actBurnSprite(pSprite3->owner, pXSprite, (4+gGameOptions.nDifficulty)<<2);
+                                actDamageSprite(nOwner, pSprite, kDamageBurn, 8);
+                            }                                                      
+                        }
+                    }
+                }
+                // end marius
             }
         }
     }
@@ -6935,7 +6963,6 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                 }
                 else // extrablood code
                 {
-                    // splatIncrement for default
                     static const int kMaxSplatIncrementBase = 5; // base for random splat increment
                     static const int kPitchforkSplatChance = 0x6666; // 40% chance for pitchfork-like effects
                     static const int kShotgunSplatChance = 0x4000; // 25% chance for shotgun-like effects

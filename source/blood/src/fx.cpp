@@ -70,7 +70,7 @@ FXDATA gFXData[] = {
     { kCallbackNone, 2, 43, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 48, 3, -256, 8192, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 60, 3, -256, 8192, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackFXBloodBits, 2, 0, 1, 46603, 2048, 480, 2154, 40, 40, 0, -12, 0 }, // blood chunk
+    { kCallbackFXBloodBitsShort, 2, 0, 1, 46603, 2048, 480, 2154, 40, 40, 0, -12, 0 }, // blood chunk
     { kCallbackNone, 2, 0, 3, 46603, 5120, 480, 2269, 24, 24, 0, -128, 0 },
     { kCallbackNone, 2, 0, 3, 46603, 5120, 480, 1720, 24, 24, 0, -128, 0 },
     { kCallbackNone, 1, 0, 1, 58254, 3072, 480, 2280, 48, 48, 0, -128, 0 },
@@ -118,6 +118,7 @@ FXDATA gFXData[] = {
     { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // marius, ceiling fx, ceiling bullet decal
     { kCallbackNone, 1, 0, 3, 0, 0, 0, 838, 16, 16, 80, -8, 0 }, // marius, floor fx, floor bullet decal
     { kCallbackNone, 2, 0, 0, 0, 0, 960, 0, 32, 32, 610, 0, 0 }, // marius, footprints
+    { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // marius, short floor blood splat
 };
 
 void CFX::fxKill(int nSprite)
@@ -189,7 +190,7 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
                 duration = pFX->duration;
             duration *= 10;
             break;
-        case FX_36: // blood splat
+        case FX_36: // floor blood splat
         case FX_57: // ceiling blood splat
         case FX_60: // footprint
             if (!duration)
@@ -398,12 +399,13 @@ void CFX::fxProcess(void)
             getzsofslope(nSector, pSprite->x, pSprite->y, &ceilZ, &floorZ);
             switch (pSprite->type)
             {
-            case FX_36: // floor blood decal
+            case FX_36: // floor blood splat
             case FX_59: // floor bullet decal
             case FX_60: // footprint
+            case FX_61: // short floor blood splat
                 pSprite->z = floorZ - 3;
                 break;
-            case FX_57: // ceiling blood decal
+            case FX_57: // ceiling blood splat
             case FX_58: // ceiling bullet decal
                 pSprite->z = ceilZ + 3;
                 break;
