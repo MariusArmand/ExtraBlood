@@ -6926,10 +6926,22 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                                 }
                                 else // extrablood code
                                 {
-                                    if (t2 > FX_NONE) // allways spawn blood on wall
+                                    // always spawn blood on wall
+                                    if (t2 > FX_NONE && t3 > FX_NONE)
+                                    {
+                                        if (Chance(0x4000)) // 25% chance for t3 when both t2 and t3 are set
+                                            pFX = gFX.fxSpawn(t3, nSector, x, y, z);
+                                        else
+                                            pFX = gFX.fxSpawn(t2, nSector, x, y, z);
+                                    } 
+                                    else if (t2 > FX_NONE)
+                                    {
                                         pFX = gFX.fxSpawn(t2, nSector, x, y, z);
-                                    else if(t3 > FX_NONE)
+                                    } 
+                                    else if (t3 > FX_NONE)
+                                    {
                                         pFX = gFX.fxSpawn(t3, nSector, x, y, z);
+                                    }
 
                                     if (pFX)
                                     {

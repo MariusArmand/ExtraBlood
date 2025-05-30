@@ -91,8 +91,8 @@ FXDATA gFXData[] = {
     { kCallbackNone, 0, 0, 3, 58254, 1024, 480, 2620, 48, 48, 0, 0, 0 },
     { kCallbackNone, 1, 55, 1, -13981, 5120, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackNone, 1, 56, 1, -13981, 5120, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackNone, 1, 57, 1, 0, 2048, 0, 0, 0, 0, 0, 0, 0 },
-    { kCallbackNone, 1, 58, 1, 0, 2048, 0, 0, 0, 0, 0, 0, 0 },
+    { kCallbackNone, 1, 57, 1, 0, 2048, 0, 0, 0, 0, 0, 0, 0 }, // big wall blood splat
+    { kCallbackNone, 1, 58, 1, 0, 2048, 0, 0, 0, 0, 0, 0, 0 }, // small wall blood splat
     { kCallbackNone, 2, 0, 0, 0, 0, 960, 956, 32, 32, 610, 0, 0 }, // floor blood splat
     { kCallbackFXBouncingSleeve, 2, 62, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
     { kCallbackFXBouncingSleeve, 2, 63, 0, 46603, 1024, 0, 0, 0, 0, 0, 0, 0 },
@@ -180,15 +180,17 @@ spritetype * CFX::fxSpawn(FX_ID nFx, int nSector, int x, int y, int z, unsigned 
         case FX_2:
         case FX_3:
         case FX_13:
-        case FX_34:
+        case FX_34: // big wall blood splat
             if (!duration) // no override duration given, load from global fx data struct
                 duration = pFX->duration;
             duration *= 20;
+            pFX->airdrag = 0;
             break;
-        case FX_35:
+        case FX_35: // small wall blood splat
             if (!duration)
                 duration = pFX->duration;
             duration *= 10;
+            pFX->airdrag = 0;
             break;
         case FX_36: // floor blood splat
         case FX_57: // ceiling blood splat
@@ -298,9 +300,18 @@ void CFX::fxProcess(void)
             pSprite->x += xvel[nSprite]>>12;
         if (yvel[nSprite])
             pSprite->y += yvel[nSprite]>>12;
-        if (zvel[nSprite])
-            pSprite->z += zvel[nSprite]>>8;
         // marius
+        // wall blood splats shouldn't sink away
+        if (VanillaMode()) // original code
+        {
+            if (zvel[nSprite])
+                pSprite->z += zvel[nSprite]>>8;
+        }
+        else // extrablood code
+        {
+            if (pSprite->type != FX_34 && pSprite->type != FX_35 && zvel[nSprite])
+                pSprite->z += zvel[nSprite]>>8;
+        }
         // embed NotBlood underwater gravity behavior
 		const bool bCasingType = (pSprite->type >= FX_37) && (pSprite->type <= FX_42);
 		if (!VanillaMode() && bCasingType && IsUnderwaterSector(pSprite->sectnum)) // lower gravity by 75% underwater (only for bullet casings)
