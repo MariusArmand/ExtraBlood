@@ -3181,7 +3181,31 @@ void actKillDude(int nKillerSprite, spritetype *pSprite, DAMAGE_TYPE damageType,
                     else if (nRand <= 50) actDropObject(pSprite, kItemAmmoTeslaCharge);
                 }
             }
-        }        
+        }
+        break;
+        case kDudeZombieAxeNormal:
+        case kDudeZombieButcher: {
+            if (!VanillaMode()) // extrablood code
+            {                
+                int nRand = Random(100);
+                if (nRand <= 50) actDropObject(pSprite, kItemAmmoSawedoffFew);
+                else if (nRand <= 75) actDropObject(pSprite, kItemAmmoTommygunFew);
+                else if (nRand <= 100) actDropObject(pSprite, kItemAmmoTNTBundle);
+            }
+        }
+        break;
+        #ifdef NOONE_EXTENSIONS
+        case kDudeModernCustom: {
+            if (!VanillaMode() && !DudeIsSmall(pSprite)) // extrablood code
+            {
+                int nRand = Random(100);
+                if (nRand <= 50) actDropObject(pSprite, kItemAmmoSawedoffFew);
+                else if (nRand <= 75) actDropObject(pSprite, kItemAmmoTommygunFew);
+                else if (nRand <= 100) actDropObject(pSprite, kItemAmmoTNTBundle);
+            }
+        }
+        break;
+        #endif
         // end marius
     }
 
