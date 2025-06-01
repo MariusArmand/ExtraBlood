@@ -868,7 +868,13 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char* pzArgs)
             gMe->pwUpTime[kPwUpDivingSuit] = gPowerUpInfo[kPwUpDivingSuit].bonusTime;
         break;
     case kCheatTequila:
-        ToggleWooMode();
+        // marius
+        // gunslinger mode
+        if (VanillaMode()) // original code
+            ToggleWooMode();
+        else // extrablood code
+            SetDualWield(true);
+        // end marius        
         break;
     case kCheatFunkyShoes:
         ToggleBoots();
@@ -903,7 +909,7 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char* pzArgs)
         SetWeapons(gInfiniteAmmo);
         // marius
         // gunslinger mode
-        SetDualWield(true);
+        SetDualWield(gInfiniteAmmo);
         // end marius
         break;
     case kCheatHongKong:
@@ -924,7 +930,13 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char* pzArgs)
         break;
     case kCheatBunz:
         SetWeapons(true);
-        SetWooMode(true);
+        // marius
+        // gunslinger mode
+        if (VanillaMode()) // original code
+            SetWooMode(true);
+        else // extrablood code
+            SetDualWield(true);
+        // end marius
         break;
     case kCheatCousteau:
         actHealDude(gMe->pXSprite,200,200);
@@ -944,7 +956,13 @@ void CCheatMgr::Process(CCheatMgr::CHEATCODE nCheatCode, char* pzArgs)
         SetArmor(false);
         SetToys(false);
         SetKeys(false);
-        SetWooMode(true);
+        // marius
+        // gunslinger mode
+        if (VanillaMode()) // original code
+            SetWooMode(true);
+        else // extrablood code
+            SetDualWield(true);
+        // end marius        
         powerupActivate(gMe, kPwUpDeliriumShroom);
         gMe->pXSprite->health = 16;
         gMe->hasWeapon[kWeaponPitchfork] = 1;

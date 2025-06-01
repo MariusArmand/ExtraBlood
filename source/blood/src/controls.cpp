@@ -442,8 +442,9 @@ void ctrlGetInput(void)
     // quick restart
     if (BUTTON(gamefunc_Quick_Restart))
     {
+        gInfiniteAmmo = false;
         CONTROL_ClearButton(gamefunc_Quick_Restart);
-        gInput.keyFlags.restart = 1;        
+        gInput.keyFlags.restart = 1;
     }
     // end marius
 

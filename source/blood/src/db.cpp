@@ -225,12 +225,11 @@ void InsertSpriteSect(int nSprite, int nSector)
     dassert(nSprite >= 0 && nSprite < kMaxSprites);
     dassert(nSector >= 0 && nSector < kMaxSectors);
     // marius
-    // gunslinger mode
-    // replace akimbo powerup by super armor
+    // tempest powerup
+    // replace akimbo powerup by tempest powerup
     if (!VanillaMode() && sprite[nSprite].picnum == 829)
     {
-        sprite[nSprite].lotag = kItemArmorSuper;
-        sprite[nSprite].picnum = 2594; // Set picnum to super armor
+        sprite[nSprite].picnum = 815; // Set picnum to tempest
     }
     // end marius
     int nOther = headspritesect[nSector];

@@ -1374,7 +1374,8 @@ void viewBurnTime(int gScale)
     }
 }
 
-#define kPowerUps 12
+//#define kPowerUps 12
+#define kPowerUps 13 // marius, tempest powerup
 
 const struct POWERUPDISPLAY {
     int nTile;
@@ -1396,6 +1397,11 @@ const struct POWERUPDISPLAY {
     {gPowerUpInfo[kPwUpShrinkShroom].picnum, fix16_from_float(0.4f), 4}, // shrink shroom
 
     {gPowerUpInfo[kPwUpDivingSuit].picnum, fix16_from_float(0.3f), 9}, // diving suit supply
+    
+    // marius
+    // tempest powerup
+    {815, fix16_from_float(0.45f), 7}, // tempest
+    // end marius
 };
 
 void viewDrawPowerUps(PLAYER* pPlayer)
@@ -1407,7 +1413,14 @@ void viewDrawPowerUps(PLAYER* pPlayer)
     nPowerActive[0] = pPlayer->pwUpTime[kPwUpShadowCloak]; // invisibility
     nPowerActive[1] = pPlayer->pwUpTime[kPwUpReflectShots]; // reflects enemy shots
     nPowerActive[2] = pPlayer->pwUpTime[kPwUpDeathMask]; // invulnerability
-    nPowerActive[3] = pPlayer->pwUpTime[kPwUpTwoGuns];// guns akimbo
+    // marius
+    // tempest powerup
+    //nPowerActive[3] = pPlayer->pwUpTime[kPwUpTwoGuns];// guns akimbo
+    if (PuTempestCheck(pPlayer))
+        nPowerActive[3] = 0, nPowerActive[12] = pPlayer->pwUpTime[kPwUpTwoGuns]; // tempest
+    else
+        nPowerActive[3] = pPlayer->pwUpTime[kPwUpTwoGuns], nPowerActive[12] = 0; // guns akimbo
+    // end marius
     nPowerActive[4] = pPlayer->pwUpTime[kPwUpShadowCloakUseless]; // shadow cloak
 
     // not in official maps
@@ -1757,6 +1770,11 @@ void UpdateStatusBar(ClockTicks arg)
         if (pPlayer->curWeapon && pPlayer->weaponAmmo != -1)
         {
             int num = pPlayer->ammoCount[pPlayer->weaponAmmo];
+            // marius
+            // tempest
+            if (PuTempestCheck(pPlayer))
+                num = gAmmoInfo[pPlayer->weaponAmmo].max;
+            // end marius
             if (pPlayer->weaponAmmo == 6)
                 num /= 10;
             if ((unsigned int)gAmmoIcons[pPlayer->weaponAmmo].nTile < kMaxTiles)
@@ -1798,6 +1816,11 @@ void UpdateStatusBar(ClockTicks arg)
         if (pPlayer->curWeapon && pPlayer->weaponAmmo != -1)
         {
             int num = pPlayer->ammoCount[pPlayer->weaponAmmo];
+            // marius
+            // tempest
+            if (PuTempestCheck(pPlayer))
+                num = gAmmoInfo[pPlayer->weaponAmmo].max;
+            // end marius
             if (pPlayer->weaponAmmo == 6)
                 num /= 10;
             DrawStatNumber("%3d", num, 2240, 42, 183, 0, 0, 256);
@@ -1860,8 +1883,13 @@ void UpdateStatusBar(ClockTicks arg)
         if (pPlayer->curWeapon && pPlayer->weaponAmmo != -1)
         {
             int num = pPlayer->ammoCount[pPlayer->weaponAmmo];
+            // marius
+            // tempest
+            if (PuTempestCheck(pPlayer))
+                num = gAmmoInfo[pPlayer->weaponAmmo].max;
             if (pPlayer->weaponAmmo == 6)
                 num /= 10;
+            // end marius
             DrawStatNumber("%3d", num, 2240, 216, 183, 0, 0);
         }
         for (int i = 9; i >= 1; i--)
@@ -1869,6 +1897,11 @@ void UpdateStatusBar(ClockTicks arg)
             int x = 135+((i-1)/3)*23;
             int y = 182+((i-1)%3)*6;
             int num = pPlayer->ammoCount[i];
+            // marius
+            // tempest
+            if (PuTempestCheck(pPlayer))
+                num = gAmmoInfo[i].max;
+            // end marius
             if (i == 6)
                 num /= 10;
             if (i == pPlayer->weaponAmmo)

@@ -375,4 +375,9 @@ void        playerHandChoke(PLAYER *pPlayer);
 void PlayerSetFootprint(PLAYER *pPlayer);
 void PlayerSetFootprint(PLAYER *pPlayer, int nFootprintPicnum);
 void PlayerLeaveFootprint(PLAYER *pPlayer, int z);
+// gunslinger mode
+bool PuTwoGunsCheckVanilla(PLAYER *pPlayer);
+// tempest
+bool PlayerHasInfiniteAmmo(PLAYER *pPlayer);
+bool PuTempestCheck(PLAYER *pPlayer);
 // end marius

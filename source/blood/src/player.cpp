@@ -535,7 +535,11 @@ void powerupDeactivate(PLAYER *pPlayer, int nPowerUp)
             if (!VanillaMode() && !powerupAkimboWeapons(pPlayer->curWeapon)) // if weapon doesn't have a akimbo state, don't raise weapon
                 break;
             pPlayer->input.newWeapon = pPlayer->curWeapon;
-            WeaponRaise(pPlayer);
+            // marius
+            // tempest
+            if (VanillaMode())
+                WeaponRaise(pPlayer);
+            // end marius
             break;
     }
 }
@@ -1482,7 +1486,23 @@ void PickUp(PLAYER *pPlayer, spritetype *pSprite)
 #endif
     if (nType >= kItemBase && nType <= kItemMax) {
         pickedUp = PickupItem(pPlayer, pSprite);
-        if (pickedUp && customMsg == -1) sprintf(buffer, "Picked up %s", gItemText[nType - kItemBase]);
+        // marius
+        // tempest
+        if (VanillaMode()) // original code
+        {
+            if (pickedUp && customMsg == -1) sprintf(buffer, "Picked up %s", gItemText[nType - kItemBase]);
+        }
+        else // extrablood code
+        {
+            if (pickedUp && customMsg == -1) 
+            {
+                const char *pItemText = gItemText[nType - kItemBase];
+                if (nType == kItemTwoGuns) // replace guns akimbo pickup text
+                    pItemText = "Tempest";
+                sprintf(buffer, "Picked up %s", pItemText);
+            }        
+        }
+        // end marius
     
     } else if (nType >= kItemAmmoBase && nType < kItemAmmoMax) {
         pickedUp = PickupAmmo(pPlayer, pSprite);
@@ -1555,7 +1575,7 @@ void CheckPickUp(PLAYER *pPlayer)
 // gunslinger mode
 bool IsDualWielding(PLAYER *pPlayer, int nWeapon)
 {
-    if ((pPlayer->hasDoubleWeapon[nWeapon] && pPlayer->hasDualWieldToggled[nWeapon]))
+    if (!VanillaMode() && pPlayer->hasDoubleWeapon[nWeapon] && pPlayer->hasDualWieldToggled[nWeapon])
         return 1;
     else
         return 0;
@@ -2540,7 +2560,11 @@ int playerDamageSprite(int nSource, PLAYER *pPlayer, DAMAGE_TYPE nDamageType, in
 
 int UseAmmo(PLAYER *pPlayer, int nAmmoType, int nDec)
 {
-    if (gInfiniteAmmo)
+    // marius
+    // tempest
+    //if (gInfiniteAmmo)
+    if (PlayerHasInfiniteAmmo(pPlayer))
+    // end marius
         return 9999;
     if (nAmmoType == -1)
         return 9999;
@@ -2853,5 +2877,25 @@ void PlayerLeaveFootprint(PLAYER *pPlayer, int z)
             pPlayer->footprintCountdown--; // countdown even if footprint was not able to spawn (e.g. during crossing a bridge)
         }
     }
+}
+
+// gunslinger mode
+bool PuTwoGunsCheckVanilla(PLAYER *pPlayer) // short vanilla akimbo powerup check
+{
+    return (VanillaMode() && powerupCheck(pPlayer, kPwUpTwoGuns));
+}
+
+// tempest
+bool PlayerHasInfiniteAmmo(PLAYER *pPlayer)
+{
+    if (gInfiniteAmmo || PuTempestCheck(pPlayer)) // if infinite ammo cheat was used or tempest is active
+        return true;
+    else
+        return false;
+}
+
+bool PuTempestCheck(PLAYER *pPlayer) // short tempest powerup check
+{
+    return (!VanillaMode() && powerupCheck(pPlayer, kPwUpTwoGuns));
 }
 // end marius
