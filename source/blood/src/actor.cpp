@@ -7077,7 +7077,12 @@ void actFireVector(spritetype *pShooter, int a2, int a3, int a4, int a5, int a6,
                                         case kDudeCultistTommy:
                                         case kDudeCultistTommyProne:
                                             if (Chance(kTommySplatChance)) // apply a chance to limit blood splats when using tommy
-                                            fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                                fxSpawnBlood(pSprite, pVectorData->dmg<<4);
+                                            break;
+                                        case kDudeGargoyleFlesh:
+                                        case kDudeGargoyleStone:
+                                            if (vectorType == kVectorGargSlash && Chance(0x4000))
+                                                fxSpawnBlood(pSprite, pVectorData->dmg<<4);
                                             break;
                                         default:
                                             fxSpawnBlood(pSprite, pVectorData->dmg<<4);
