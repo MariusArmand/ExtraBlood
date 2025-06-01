@@ -2,17 +2,18 @@
 Fork of the Reverse-engineered port of the Build game Blood [[NBlood](https://github.com/NBlood/NBlood)] using EDuke32 engine technology and development principles.
 
 ### Distinctive features
-#### Gore
+#### Visuals & gore
 - More and longer lasting gore
 - Decals and blood fx on ceilings
 - Decals on floors
 - Blood fx on floors follow slope
 - Squish gibs by running through them
-- Leave bloody footsteps after running through gibs
+- Footprints (after running through blood, water, goo or acid)
 #### Dual wielding
 - Dual wield flarepistols, shotguns, tommyguns and teslacannons (toggled by configurable keyboard key)
 - Cultists have an increased chance to drop their weapons to accommodate the dual wield mechanic (Green cultists drop flarepistols and flares)
-- Akimbo power-up is replaced by Super Armor
+- Zombies and butchers drop shells, bullets or a bundle of TNT
+- Akimbo powerup is replaced by Tempest, a new powerup that gives you 30 seconds of infinite ammo
 #### Misc
 - Configurable keyboard key to Quick Restart the current level
 
