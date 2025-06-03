@@ -3188,9 +3188,9 @@ void actKillDude(int nKillerSprite, spritetype *pSprite, DAMAGE_TYPE damageType,
             if (!VanillaMode()) // extrablood code
             {                
                 int nRand = Random(100);
-                if (nRand <= 50) actDropObject(pSprite, kItemAmmoSawedoffFew);
-                else if (nRand <= 75) actDropObject(pSprite, kItemAmmoTommygunFew);
-                else if (nRand <= 100) actDropObject(pSprite, kItemAmmoTNTBundle);
+                if (nRand <= 10) actDropObject(pSprite, kItemAmmoTNTBundle);
+                else if (nRand <= 30) actDropObject(pSprite, kItemAmmoSawedoffFew);
+                else if (nRand <= 60) actDropObject(pSprite, kItemAmmoTommygunFew);
             }
         }
         break;
