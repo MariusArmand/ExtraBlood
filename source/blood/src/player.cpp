@@ -2796,10 +2796,15 @@ void PlayerSetFootprint(PLAYER *pPlayer)
     switch (surfType[surfPicnum]) {
     case kSurfFlesh:
         if ((surfPicnum >= 2915 && surfPicnum <= 2924)) // looks like water
+        {
             pPlayer->footprintPicnum = kFootprintWater;
+            pPlayer->footprintCountdown = kFootPrintCountdownMax;
+        }
         else if (surfPicnum == 243 || surfPicnum == 1006 || surfPicnum == 1130) // limit to textures that look like blood
+        {
             pPlayer->footprintPicnum = kFootprintBlood;
-        pPlayer->footprintCountdown = kFootPrintCountdownMax;
+            pPlayer->footprintCountdown = kFootPrintCountdownMax;
+        }
         break;
     case kSurfWater:
         pPlayer->footprintPicnum = kFootprintWater;
@@ -2810,10 +2815,15 @@ void PlayerSetFootprint(PLAYER *pPlayer)
             int nXSector = sector[nSector].extra;
             if ((nXSector > -1 && xsector[nXSector].damageType > 0) && // damageType is set
                 (surfPicnum >= 1120 && surfPicnum <= 1126)) // green goo
+            {
                 pPlayer->footprintPicnum = kFootprintAcid;
+                pPlayer->footprintCountdown = kFootPrintCountdownMax;
+            }
             else
+            {
                 pPlayer->footprintPicnum = kFootprintDirt;
-            pPlayer->footprintCountdown = kFootPrintCountdownMax;
+                pPlayer->footprintCountdown = kFootPrintCountdownMax;
+            }
         }
         break;
     }
