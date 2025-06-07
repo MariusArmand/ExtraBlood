@@ -410,20 +410,26 @@ void CFX::fxProcess(void)
             getzsofslope(nSector, pSprite->x, pSprite->y, &ceilZ, &floorZ);
             switch (pSprite->type)
             {
-            case FX_36: // floor blood splat
             case FX_59: // floor bullet decal
-            case FX_60: // footprint
-            case FX_61: // short floor blood splat
                 pSprite->z = floorZ - 3;
                 break;
-            case FX_57: // ceiling blood splat
+            case FX_36: // floor blood splat
+            case FX_61: // short floor blood splat
+                pSprite->z = floorZ - 6;
+                break;
+            case FX_60: // footprint
+                pSprite->z = floorZ - 9;
+                break;
             case FX_58: // ceiling bullet decal
                 pSprite->z = ceilZ + 3;
+                break;
+            case FX_57: // ceiling blood splat
+                pSprite->z = ceilZ + 6;
                 break;
             }
 
             // kill floor/ceiling fx if it is no longer in the original sector (e.g. due to a slide marked sector such as the grave in e1m1) 
-            if ((pSprite->type >= FX_57 && pSprite->type <= FX_60) && !SprInside(pSprite, nSector)) 
+            if ((pSprite->type >= FX_57 && pSprite->type <= FX_61) && !SprInside(pSprite, nSector)) 
             {
                 gFX.fxKill(pSprite->index); 
             }
@@ -436,7 +442,7 @@ void CFX::fxProcess(void)
 // ceiling fx
 void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
 {
-    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z + 3);
+    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z);
     if (pFX)
     {
         pFX->ang = angle;
@@ -471,6 +477,17 @@ void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         if (Chance(0X8000))
         {
             pFX->cstat |= CSTAT_SPRITE_YFLIP;
+        }
+
+        // offset z based on fx type
+        switch (nFx)
+        {
+        case FX_57: // ceiling blood splat
+            pFX->z = z + 6;
+            break;
+        default:
+            pFX->z = z + 3;
+            break;            
         }
 
         // delete fx when it is:
@@ -512,7 +529,7 @@ void fxSpawnCeiling(FX_ID nFx, int nSector, int x, int y, int z, int angle)
 // floor fx
 void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle)
 {
-    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z - 3);
+    spritetype *pFX = gFX.fxSpawn(nFx, nSector, x, y, z);
     if (pFX)
     {
         pFX->ang = angle;
@@ -547,6 +564,21 @@ void fxSpawnFloor(FX_ID nFx, int nSector, int x, int y, int z, int angle)
         if (Chance(0X8000))
         {
             pFX->cstat |= CSTAT_SPRITE_XFLIP;
+        }
+
+        // offset z based on fx type
+        switch (nFx)
+        {
+        case FX_36: // floor blood splat
+        case FX_61: // short floor blood splat
+            pFX->z = z - 6;
+            break;                
+        case FX_60: // footprint
+            pFX->z = z - 9;
+            break;
+        default:
+            pFX->z = z - 3;
+            break;
         }
 
         // delete fx when it is:
