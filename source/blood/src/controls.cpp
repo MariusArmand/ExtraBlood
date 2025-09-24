@@ -517,14 +517,14 @@ void ctrlGetInput(void)
         input.q16turn = fix16_sadd(input.q16turn, fix16_sdiv(fix16_from_int(info.mousex), F16(32)));
 
     if (gMouseAim)
-        input.q16mlook = fix16_sadd(input.q16mlook, fix16_sdiv(fix16_from_int(info.mousey), F16(128)));
+        input.q16mlook = fix16_sadd(input.q16mlook, fix16_sdiv(fix16_from_int(gMouseAimingFlipped ? info.mousey : -info.mousey), F16(128)));
     else
         input.forward -= info.mousey;
 
     if (CONTROL_JoystickEnabled) // controller input
     {
-        input.strafe -= info.dx>>1;
-        input.forward -= info.dz>>1;
+        input.strafe -= int(scaleAdjustmentToInterval(info.dx)/2.f);
+        input.forward -= int(scaleAdjustmentToInterval(info.dz)/2.f);
         if (!run) // when autorun is off/run is not held, reduce overall speed for controller
         {
             input.strafe = clamp(input.strafe, -256, 256);
@@ -533,20 +533,17 @@ void ctrlGetInput(void)
         if (info.mousey == 0)
         {
             if (gMouseAim)
-                input.q16mlook = fix16_sadd(input.q16mlook, fix16_sdiv(fix16_from_int(info.dpitch>>4), F16(128)));
+                input.q16mlook = fix16_sadd(input.q16mlook, fix16_sdiv(fix16_from_float(scaleAdjustmentToInterval(gMouseAimingFlipped ? info.dpitch : -info.dpitch)/16.f), F16(128)));
             else
-                input.forward -= info.dpitch>>1;
+                input.forward -= int(scaleAdjustmentToInterval(info.dpitch)/2.f);
         }
-        if (input.q16turn == 0)
-            input.q16turn = fix16_sadd(input.q16mlook, fix16_sdiv(fix16_from_int(info.dyaw>>4), F16(32)));
+        input.q16turn = fix16_sadd(input.q16turn, fix16_sdiv(fix16_from_float(scaleAdjustmentToInterval(info.dyaw)/16.f), F16(32)));
         if (gCenterViewOnDrop == 2)
         {
             gInput.keyFlags.lookCenter = 1;
             gCenterViewOnDrop = 1;
         }
     }
-    if (!gMouseAimingFlipped)
-        input.q16mlook = -input.q16mlook;
 
     if (KB_KeyPressed(sc_Pause)) // 0xc5 in disassembly
     {

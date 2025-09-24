@@ -1898,6 +1898,7 @@ RESTART:
             }
             if (numplayers == 1)
                 gBufferJitter = 0;
+            ctrlGetInput();
             if (totalclock >= gNetFifoClock && ready2send)
             {
                 do
