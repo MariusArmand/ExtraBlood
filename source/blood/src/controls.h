@@ -44,7 +44,7 @@ union KEYFLAGS
     struct
     {
         unsigned int action : 1;
-        unsigned int jab : 1;
+        //unsigned int jab : 1; // marius, decomission to make place for lastWeapon so int16_t size is respected
         unsigned int prevItem : 1;
         unsigned int nextItem : 1;
         unsigned int useItem : 1;
@@ -59,7 +59,7 @@ union KEYFLAGS
         unsigned int pause : 1;
         unsigned int quit : 1;
         unsigned int restart : 1;
-        unsigned int lastWeapon : 1; // new to nblood
+        unsigned int lastWeapon : 1; // tmyqlfpir, new to nblood. Marius, replaces jab
     };
 };
 

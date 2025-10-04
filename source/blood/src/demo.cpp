@@ -549,7 +549,11 @@ void CDemo::FlushInput(int nCount)
         bitWriter.writeBit(pInput->buttonFlags.lookUp);
         bitWriter.writeBit(pInput->buttonFlags.lookDown);
         bitWriter.writeBit(pInput->keyFlags.action);
-        bitWriter.writeBit(pInput->keyFlags.jab);
+        // marius
+        // decomission to make place for lastWeapon so int16_t size is respected
+        //bitWriter.writeBit(pInput->keyFlags.jab);
+        bitWriter.skipBits(1);
+        // end marius        
         bitWriter.writeBit(pInput->keyFlags.prevItem);
         bitWriter.writeBit(pInput->keyFlags.nextItem);
         bitWriter.writeBit(pInput->keyFlags.useItem);
@@ -569,7 +573,7 @@ void CDemo::FlushInput(int nCount)
         bitWriter.writeBit(pInput->keyFlags.pause);
         bitWriter.writeBit(pInput->keyFlags.quit);
         bitWriter.writeBit(pInput->keyFlags.restart);
-        bitWriter.writeBit(pInput->keyFlags.lastWeapon);
+        bitWriter.writeBit(pInput->keyFlags.lastWeapon); // tmyqlfpir, new to nblood. Marius, replaces jab
         bitWriter.writeBit(pInput->useFlags.useBeastVision);
         bitWriter.writeBit(pInput->useFlags.useCrystalBall);
         bitWriter.writeBit(pInput->useFlags.useJumpBoots);
@@ -610,7 +614,11 @@ void CDemo::ReadInput(int nCount)
             pInput->buttonFlags.lookDown = bitReader.readBit();
             bitReader.skipBits(26);
             pInput->keyFlags.action = bitReader.readBit();
-            pInput->keyFlags.jab = bitReader.readBit();
+            // marius
+            // decomission to make place for lastWeapon so int16_t size is respected
+            //pInput->keyFlags.jab = bitReader.readBit();
+            bitReader.skipBits(1);
+            // end marius
             pInput->keyFlags.prevItem = bitReader.readBit();
             pInput->keyFlags.nextItem = bitReader.readBit();
             pInput->keyFlags.useItem = bitReader.readBit();
@@ -630,7 +638,7 @@ void CDemo::ReadInput(int nCount)
             pInput->keyFlags.pause = bitReader.readBit();
             pInput->keyFlags.quit = bitReader.readBit();
             pInput->keyFlags.restart = bitReader.readBit();
-            pInput->keyFlags.lastWeapon = 0;
+            pInput->keyFlags.lastWeapon = 0; // tmyqlfpir, new to nblood. Marius, replaces jab
             bitReader.skipBits(17);
             pInput->useFlags.useBeastVision = bitReader.readBit();
             pInput->useFlags.useCrystalBall = bitReader.readBit();
@@ -667,7 +675,11 @@ void CDemo::ReadInput(int nCount)
             pInput->buttonFlags.lookUp = bitReader.readBit();
             pInput->buttonFlags.lookDown = bitReader.readBit();
             pInput->keyFlags.action = bitReader.readBit();
-            pInput->keyFlags.jab = bitReader.readBit();
+            // marius
+            // decomission to make place for lastWeapon so int16_t size is respected
+            //pInput->keyFlags.jab = bitReader.readBit();
+            bitReader.skipBits(1);
+            // end marius
             pInput->keyFlags.prevItem = bitReader.readBit();
             pInput->keyFlags.nextItem = bitReader.readBit();
             pInput->keyFlags.useItem = bitReader.readBit();
@@ -687,7 +699,7 @@ void CDemo::ReadInput(int nCount)
             pInput->keyFlags.pause = bitReader.readBit();
             pInput->keyFlags.quit = bitReader.readBit();
             pInput->keyFlags.restart = bitReader.readBit();
-            pInput->keyFlags.lastWeapon = bitReader.readBit();
+            pInput->keyFlags.lastWeapon = bitReader.readBit(); // tmyqlfpir, new to nblood. Marius, replaces jab            
             pInput->useFlags.useBeastVision = bitReader.readBit();
             pInput->useFlags.useCrystalBall = bitReader.readBit();
             pInput->useFlags.useJumpBoots = bitReader.readBit();
