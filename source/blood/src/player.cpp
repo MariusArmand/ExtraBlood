@@ -357,7 +357,7 @@ uint32_t PLAYER::CalcNonSpriteChecksum(void)
     sum += gooTime&0xFFFFFFFF;
     sum += wetTime&0xFFFFFFFF;
     sum += bubbleTime&0xFFFFFFFF;
-    sum += at306&0xFFFFFFFF;
+    sum += lastWeapon&0xFFFFFFFF;
     sum += restTime&0xFFFFFFFF;
     sum += kickPower&0xFFFFFFFF;
     sum += laughCount&0xFFFFFFFF;
@@ -909,7 +909,6 @@ void playerStart(int nPlayer, int bNewLevel)
     pPlayer->gooTime = 0;
     pPlayer->wetTime = 0;
     pPlayer->bubbleTime = 0;
-    pPlayer->at306 = 0;
     pPlayer->restTime = 0;
     pPlayer->kickPower = 0;
     pPlayer->laughCount = 0;
@@ -943,6 +942,7 @@ void playerStart(int nPlayer, int bNewLevel)
     pPlayer->throwPower = 0;
     pPlayer->deathTime = 0;
     pPlayer->nextWeapon = kWeaponNone;
+    pPlayer->lastWeapon = kWeaponPitchfork;
     xvel[pSprite->index] = yvel[pSprite->index] = zvel[pSprite->index] = 0;
     pInput->q16turn = 0;
     pInput->keyFlags.word = 0;
@@ -1033,6 +1033,7 @@ void playerReset(PLAYER *pPlayer)
     pPlayer->curWeapon = kWeaponNone;
     pPlayer->qavCallback = -1;
     pPlayer->input.newWeapon = kWeaponPitchfork;
+    pPlayer->lastWeapon = kWeaponPitchfork;
     for (int i = 0; i < kWeaponMax; i++)
     {
         pPlayer->weaponOrder[0][i] = dword_136400[i];

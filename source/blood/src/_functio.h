@@ -86,6 +86,7 @@ char gamefunctions[NUMGAMEFUNCTIONS][MAXGAMEFUNCLEN] =
    "Toggle_Crosshair",
    "Next_Weapon",
    "Previous_Weapon",
+   "Last_Weapon",
    "Holster_Weapon",
    "Dual_Wield", // marius, gunslinger mode
    "Show_Opponents_Weapon",
@@ -152,6 +153,7 @@ const char keydefaults[NUMGAMEFUNCTIONS*2][MAXGAMEFUNCLEN] =
    "I", "",
    "'", "",
    ";", "",
+   "Q", "",
    "ScrLck", "",
    "G", "", // marius, gunslinger mode
    "Y", "",
@@ -216,6 +218,7 @@ const char oldkeydefaults[NUMGAMEFUNCTIONS*2][MAXGAMEFUNCLEN] =
    "I", "",
    "'", "",
    ";", "",
+   "", "",
    "ScrLck", "",
    "G", "", // marius, gunslinger mode
    "W", "",
@@ -315,7 +318,7 @@ static const char * joystickdefaults[MAXJOYBUTTONSANDHATS] =
    "Jump",
    "Crouch_Toggle",
    "Open",
-   "",
+   "Last_Weapon",
    "",
    "",
    "",
@@ -323,7 +326,7 @@ static const char * joystickdefaults[MAXJOYBUTTONSANDHATS] =
    "Turn_Around",
    "Previous_Weapon",
    "Next_Weapon",
-   "",
+   "Last_Weapon",
    "Inventory_Use",
    "Inventory_Left",
    "Inventory_Right",

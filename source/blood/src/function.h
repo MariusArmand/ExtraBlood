@@ -37,9 +37,9 @@ extern "C" {
 
 // marius
 // gunslinger mode, quick restart
-//#define NUMGAMEFUNCTIONS 58
+//#define NUMGAMEFUNCTIONS 59
 //#define MAXGAMEFUNCLEN 32
-#define NUMGAMEFUNCTIONS 60
+#define NUMGAMEFUNCTIONS 61
 #define MAXGAMEFUNCLEN 34
 // end marius
 
@@ -96,6 +96,7 @@ enum GameFunction_t
    gamefunc_Toggle_Crosshair,
    gamefunc_Next_Weapon,
    gamefunc_Previous_Weapon,
+   gamefunc_Last_Weapon,
    gamefunc_Holster_Weapon,
    gamefunc_Dual_Wield, // marius, gunslinger mode
    gamefunc_Show_Opponents_Weapon,
