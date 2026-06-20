@@ -59,7 +59,7 @@ ExtraBlood now uses extrablood_cvars.cfg instead of settings.cfg. Please rename 
 See: https://wiki.eduke32.com/wiki/Main_Page
 
 ## Acknowledgments
-  See AUTHORS.md
+See AUTHORS.md
 
 ## License
 ExtraBlood is licensed under the GNU General Public License version 2 (GPLv2), as inherited from NBlood.
